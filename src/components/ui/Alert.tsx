@@ -26,9 +26,9 @@ const variantStyles: Record<
     text: "text-yellow-400",
   },
   info: {
-    container: "bg-blue-500/10",
-    icon: "text-blue-500",
-    text: "text-blue-400",
+    container: "bg-mid-gray/10",
+    icon: "text-text/70",
+    text: "text-text/80",
   },
   success: {
     container: "bg-green-500/10",
