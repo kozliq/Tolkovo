@@ -1,18 +1,18 @@
-/* Handy Colors */
+/* Tolkovo Colors (accent = macOS system blue) */
 
 :root {
   /* Palette source of truth. Each themed color is defined once as a
      light/dark pair; the active tokens below and the `data-theme` overrides
      in App.css reference these, so a hex value lives in exactly one place. */
   --light-color-text: #0f0f0f;
-  --light-color-background: #fbfbfb;
-  --light-color-logo-primary: #faa2ca;
-  --light-color-logo-stroke: #382731;
+  --light-color-background: #f5f5f7;
+  --light-color-logo-primary: #007aff;
+  --light-color-logo-stroke: #1d1d1f;
 
   --dark-color-text: #fbfbfb;
-  --dark-color-background: #2c2b29;
-  --dark-color-logo-primary: #f28cbb;
-  --dark-color-logo-stroke: #fad1ed;
+  --dark-color-background: #1e1e20;
+  --dark-color-logo-primary: #0a84ff;
+  --dark-color-logo-stroke: #f5f5f7;
 
   /* Semantic status colors. First used by SecureInputWarning; intended to
      replace the ad-hoc yellow-500/red-500 usages (e.g. ui/Alert.tsx) over
@@ -23,7 +23,7 @@
   --dark-color-error: #f87171;
 
   /* Tokens that do not change between light and dark */
-  --color-background-ui: #da5893;
+  --color-background-ui: #007aff;
   --color-text-stroke: #f6f6f6;
   --color-mid-gray: #808080;
 

@@ -93,9 +93,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     .map(([id, config]) => ({ id: id as SidebarSection, ...config }));
 
   return (
-    <div className="flex flex-col w-40 h-full border-e border-mid-gray/20 items-center px-2">
-      <HandyTextLogo width={120} className="m-4" />
-      <div className="flex flex-col w-full items-center gap-1 pt-2 border-t border-mid-gray/20">
+    <div className="glass-panel flex flex-col w-44 shrink-0 items-center px-2 pt-9 pb-3">
+      <HandyTextLogo width={116} className="mb-4 mt-1" />
+      <div className="flex flex-col w-full items-center gap-0.5">
         {availableSections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
@@ -103,14 +103,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <div
               key={section.id}
-              className={`flex gap-2 items-center p-2 w-full rounded-lg cursor-pointer transition-colors ${
+              className={`flex gap-2 items-center px-2.5 py-1.5 w-full rounded-xl cursor-pointer transition-colors ${
                 isActive
-                  ? "bg-logo-primary/80"
-                  : "hover:bg-mid-gray/20 hover:opacity-100 opacity-85"
+                  ? "bg-logo-primary/15 text-logo-primary"
+                  : "hover:bg-[var(--glass-control-hover)] hover:opacity-100 opacity-85"
               }`}
               onClick={() => onSectionChange(section.id)}
             >
-              <Icon width={24} height={24} className="shrink-0" />
+              <Icon width={22} height={22} className="shrink-0" />
               <p
                 className="text-sm font-medium truncate"
                 title={t(section.labelKey)}

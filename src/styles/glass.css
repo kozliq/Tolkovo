@@ -1,0 +1,176 @@
+/*
+ * Tolkovo — Liquid Glass (macOS 26 Tahoe style).
+ *
+ * On macOS the main window is transparent and a native glass view
+ * (NSGlassEffectView, or NSVisualEffectView on older macOS) sits behind the
+ * webview (see src-tauri/src/glass.rs). The page background is therefore
+ * cleared on macOS, and UI surfaces are translucent layers on top of the
+ * native material. Other platforms keep an opaque background, where the same
+ * surfaces read as soft frosted cards.
+ *
+ * Tokens are light/dark pairs that follow the OS, or the `data-theme`
+ * override (same pattern as theme.css).
+ */
+
+:root {
+  --light-glass-panel: rgba(255, 255, 255, 0.42);
+  --light-glass-card: rgba(255, 255, 255, 0.58);
+  --light-glass-popover: rgba(250, 250, 252, 0.86);
+  --light-glass-control: rgba(0, 0, 0, 0.05);
+  --light-glass-control-hover: rgba(0, 0, 0, 0.09);
+  --light-glass-track: rgba(0, 0, 0, 0.12);
+  --light-glass-border: rgba(255, 255, 255, 0.75);
+  --light-glass-hairline: rgba(0, 0, 0, 0.07);
+  --light-glass-divider: rgba(0, 0, 0, 0.07);
+  --light-glass-highlight: rgba(255, 255, 255, 0.9);
+  --light-glass-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.07);
+  --light-glass-popover-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 48px rgba(0, 0, 0, 0.16);
+
+  --dark-glass-panel: rgba(30, 30, 34, 0.28);
+  --dark-glass-card: rgba(255, 255, 255, 0.065);
+  --dark-glass-popover: rgba(44, 44, 48, 0.86);
+  --dark-glass-control: rgba(255, 255, 255, 0.08);
+  --dark-glass-control-hover: rgba(255, 255, 255, 0.13);
+  --dark-glass-track: rgba(255, 255, 255, 0.16);
+  --dark-glass-border: rgba(255, 255, 255, 0.13);
+  --dark-glass-hairline: rgba(0, 0, 0, 0.35);
+  --dark-glass-divider: rgba(255, 255, 255, 0.07);
+  --dark-glass-highlight: rgba(255, 255, 255, 0.14);
+  --dark-glass-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.28);
+  --dark-glass-popover-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.3), 0 20px 50px rgba(0, 0, 0, 0.45);
+
+  --glass-blur: blur(28px) saturate(180%);
+  --glass-radius-panel: 22px;
+  --glass-radius-card: 18px;
+}
+
+:root,
+:root[data-theme="light"] {
+  --glass-panel: var(--light-glass-panel);
+  --glass-card: var(--light-glass-card);
+  --glass-popover: var(--light-glass-popover);
+  --glass-control: var(--light-glass-control);
+  --glass-control-hover: var(--light-glass-control-hover);
+  --glass-track: var(--light-glass-track);
+  --glass-border: var(--light-glass-border);
+  --glass-hairline: var(--light-glass-hairline);
+  --glass-divider: var(--light-glass-divider);
+  --glass-highlight: var(--light-glass-highlight);
+  --glass-shadow: var(--light-glass-shadow);
+  --glass-popover-shadow: var(--light-glass-popover-shadow);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --glass-panel: var(--dark-glass-panel);
+    --glass-card: var(--dark-glass-card);
+    --glass-popover: var(--dark-glass-popover);
+    --glass-control: var(--dark-glass-control);
+    --glass-control-hover: var(--dark-glass-control-hover);
+    --glass-track: var(--dark-glass-track);
+    --glass-border: var(--dark-glass-border);
+    --glass-hairline: var(--dark-glass-hairline);
+    --glass-divider: var(--dark-glass-divider);
+    --glass-highlight: var(--dark-glass-highlight);
+    --glass-shadow: var(--dark-glass-shadow);
+    --glass-popover-shadow: var(--dark-glass-popover-shadow);
+  }
+}
+
+:root[data-theme="dark"] {
+  --glass-panel: var(--dark-glass-panel);
+  --glass-card: var(--dark-glass-card);
+  --glass-popover: var(--dark-glass-popover);
+  --glass-control: var(--dark-glass-control);
+  --glass-control-hover: var(--dark-glass-control-hover);
+  --glass-track: var(--dark-glass-track);
+  --glass-border: var(--dark-glass-border);
+  --glass-hairline: var(--dark-glass-hairline);
+  --glass-divider: var(--dark-glass-divider);
+  --glass-highlight: var(--dark-glass-highlight);
+  --glass-shadow: var(--dark-glass-shadow);
+  --glass-popover-shadow: var(--dark-glass-popover-shadow);
+}
+
+/* macOS: let the native glass material show through the whole page. */
+:root[data-platform="macos"],
+:root[data-platform="macos"] body,
+:root[data-platform="macos"] #root {
+  background: transparent;
+}
+
+@layer components {
+  /* Sidebar / footer: a floating sheet of glass. */
+  .glass-panel {
+    background: var(--glass-panel);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius-panel);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px var(--glass-hairline),
+      var(--glass-shadow);
+  }
+
+  /* Settings groups and other content cards. */
+  .glass-card {
+    background: var(--glass-card);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius-card);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px var(--glass-hairline),
+      var(--glass-shadow);
+  }
+
+  /* Menus, tooltips, dialogs: denser glass so floating text stays legible. */
+  .glass-popover {
+    background: var(--glass-popover);
+    -webkit-backdrop-filter: blur(36px) saturate(180%);
+    backdrop-filter: blur(36px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px var(--glass-hairline),
+      var(--glass-popover-shadow);
+  }
+
+  /* Buttons, inputs, dropdown triggers. */
+  .glass-control {
+    background: var(--glass-control);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px var(--glass-hairline);
+  }
+  .glass-control:not(:disabled):hover {
+    background: var(--glass-control-hover);
+  }
+
+  .glass-divide > * + * {
+    border-top: 1px solid var(--glass-divider);
+  }
+
+  /* Top strip over the hidden title bar: drags the window. macOS only. */
+  .titlebar-drag-region {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    z-index: 40;
+  }
+
+  /* Text wordmark in the sidebar / onboarding. */
+  .logo-wordmark {
+    fill: var(--color-text);
+    letter-spacing: -0.02em;
+  }
+}

@@ -112,22 +112,22 @@ const ModelCard: React.FC<ModelCardProps> = ({
   );
 
   const baseClasses =
-    "flex flex-col rounded-xl px-4 py-3 gap-2 text-left transition-all duration-200";
+    "glass-card flex flex-col px-4 py-3 gap-2 text-left transition-all duration-200";
 
   const getVariantClasses = () => {
     if (status === "active") {
-      return "border-2 border-logo-primary/50 bg-logo-primary/10";
+      return "ring-2 ring-logo-primary/60";
     }
     if (isFeatured) {
-      return "border-2 border-logo-primary/25 bg-logo-primary/5";
+      return "ring-1 ring-logo-primary/35";
     }
-    return "border-2 border-mid-gray/20";
+    return "";
   };
 
   const getInteractiveClasses = () => {
     if (!isClickable) return "";
     if (disabled) return "opacity-50 cursor-not-allowed";
-    return "cursor-pointer hover:border-logo-primary/50 hover:bg-logo-primary/5 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] group";
+    return "cursor-pointer hover:ring-2 hover:ring-logo-primary/40 hover:scale-[1.01] active:scale-[0.99] group";
   };
 
   const handleClick = () => {
@@ -226,7 +226,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
         )}
       </div>
 
-      <hr className="w-full border-mid-gray/20" />
+      <hr className="w-full border-[var(--glass-divider)]" />
 
       {/* Bottom row: tags + action buttons (full width) */}
       <div className="flex items-center gap-3 w-full -mb-0.5 mt-0.5 h-5">

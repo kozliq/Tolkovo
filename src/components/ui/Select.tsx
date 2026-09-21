@@ -52,7 +52,7 @@ const selectStyles: StylesConfig<SelectOption, false> = {
   control: (base, state) => ({
     ...base,
     minHeight: 40,
-    borderRadius: 6,
+    borderRadius: 10,
     borderColor: state.isFocused ? "var(--color-logo-primary)" : neutralBorder,
     boxShadow: state.isFocused ? "0 0 0 1px var(--color-logo-primary)" : "none",
     backgroundColor: state.isFocused ? focusBackground : baseBackground,
@@ -96,11 +96,14 @@ const selectStyles: StylesConfig<SelectOption, false> = {
   menu: (provided) => ({
     ...provided,
     zIndex: 30,
-    backgroundColor: "var(--color-background)",
+    backgroundColor: "var(--glass-popover)",
+    backdropFilter: "blur(36px) saturate(180%)",
+    WebkitBackdropFilter: "blur(36px) saturate(180%)",
     color: "var(--color-text)",
-    border:
-      "1px solid color-mix(in srgb, var(--color-mid-gray) 30%, transparent)",
-    boxShadow: "0 10px 30px rgba(15, 15, 15, 0.2)",
+    border: "1px solid var(--glass-border)",
+    borderRadius: 14,
+    overflow: "hidden",
+    boxShadow: "var(--glass-popover-shadow)",
   }),
   option: (base, state) => ({
     ...base,

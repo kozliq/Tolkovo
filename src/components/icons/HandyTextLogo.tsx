@@ -30,7 +30,7 @@ const HandyTextLogo = ({
         fontSize="220"
         fontWeight="700"
         fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        className="logo-primary"
+        className="logo-wordmark"
       >
         {WORDMARK}
       </text>

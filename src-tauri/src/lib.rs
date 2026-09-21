@@ -8,6 +8,7 @@ mod catalog;
 pub mod cli;
 mod clipboard;
 mod commands;
+mod glass;
 mod helpers;
 mod input;
 mod llm_client;
@@ -841,6 +842,7 @@ pub fn run(cli_args: CliArgs) {
     #[cfg(target_os = "macos")]
     {
         builder = builder.plugin(tauri_nspanel::init());
+        builder = builder.plugin(tauri_plugin_liquid_glass::init());
     }
 
     // Single-instance forwards CLI args to an already-running Handy and exits.
@@ -948,6 +950,7 @@ pub fn run(cli_args: CliArgs) {
                     .resizable(true)
                     .maximizable(true)
                     .visible(false);
+            win_builder = glass::configure_main_window(win_builder);
 
             if let Some(data_dir) = portable::data_dir() {
                 win_builder = win_builder.data_directory(data_dir.join("webview"));
@@ -956,6 +959,7 @@ pub fn run(cli_args: CliArgs) {
             // Only used on Windows, to disable WebView2 browser accelerators.
             #[cfg_attr(not(target_os = "windows"), allow(unused_variables))]
             let main_window = win_builder.build()?;
+            glass::apply_to_main_window(&main_window);
 
             // Disable WebView2 browser accelerators (F5, F6, Ctrl+F, F12, ...).
             // A settings window has no use for them, and pressing F6 while

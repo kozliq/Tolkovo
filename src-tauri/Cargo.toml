@@ -159,6 +159,8 @@ objc2 = "0.6"
 objc2-foundation = "0.3"
 objc2-app-kit = "0.3"
 objc2-service-management = "0.3.2"
+# Tolkovo: native Liquid Glass window background (NSGlassEffectView / vibrancy).
+tauri-plugin-liquid-glass = "0.1.6"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk-layer-shell = { version = "0.8", features = ["v0_6"] }

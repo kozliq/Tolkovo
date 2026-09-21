@@ -35,6 +35,9 @@ type OnboardingStep = "accessibility" | "model" | "done";
 
 // Stable identity so preview effects do not re-run due to callback changes.
 const NOOP = () => {};
+// Tolkovo: the macOS window hides its title bar under the Liquid Glass
+// content, so a top strip stands in for it as the window drag handle.
+const isMacOS = document.documentElement.dataset.platform === "macos";
 
 const renderSettingsContent = (
   section: SidebarSection,
@@ -304,11 +307,11 @@ function App() {
         unstyled: true,
         classNames: {
           toast:
-            "bg-background border border-mid-gray/20 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-sm",
+            "glass-popover rounded-2xl px-4 py-3 flex items-center gap-3 text-sm",
           title: "font-medium",
           description: "text-mid-gray",
           actionButton:
-            "px-2 py-1 text-xs font-medium rounded-lg border bg-mid-gray/10 border-mid-gray/20 hover:bg-background-ui/30 hover:border-logo-primary cursor-pointer whitespace-nowrap",
+            "glass-control px-2.5 py-1 text-xs font-medium rounded-full cursor-pointer whitespace-nowrap",
         },
       }}
     />
@@ -337,7 +340,7 @@ function App() {
         <button
           type="button"
           onClick={() => setOnboardingPreview(null)}
-          className="fixed top-4 end-4 z-50 rounded-lg border border-mid-gray/20 bg-background px-4 py-2 text-sm font-medium text-text shadow-lg hover:bg-background-ui/30 cursor-pointer"
+          className="glass-popover fixed top-4 end-4 z-50 rounded-full px-4 py-2 text-sm font-medium text-text cursor-pointer"
         >
           {t("settings.debug.onboardingPreview.exitButton")}
         </button>
@@ -359,7 +362,7 @@ function App() {
           <WhatsNewGate />
         </ErrorBoundary>
         {/* Main content area that takes remaining space */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden gap-2 px-2 pt-2">
           <Sidebar
             activeSection={currentSection}
             onSectionChange={setCurrentSection}
@@ -367,7 +370,7 @@ function App() {
           {/* Scrollable content area */}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div ref={settingsScrollRef} className="flex-1 overflow-y-auto">
-              <div className="flex flex-col items-center p-4 gap-4">
+              <div className="flex flex-col items-center p-4 pt-6 gap-4">
                 <AccessibilityPermissions />
                 <SecureInputWarning />
                 {renderSettingsContent(currentSection, setOnboardingPreview)}
@@ -383,6 +386,9 @@ function App() {
 
   return (
     <>
+      {isMacOS && (
+        <div className="titlebar-drag-region" data-tauri-drag-region />
+      )}
       {toaster}
       {content}
     </>
