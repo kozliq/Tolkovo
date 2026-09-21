@@ -2,121 +2,146 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset=".github/assets/banner-light.svg">
-    <img alt="Tolkovo — голосовой ввод для macOS" src=".github/assets/banner-light.svg" width="100%">
+    <img alt="Tolkovo — голосовой ввод для macOS" src=".github/assets/banner-dark.svg" width="100%">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/kozliq/Tolkovo/releases/latest"><img alt="Последний релиз" src="https://img.shields.io/github/v/release/kozliq/Tolkovo?style=flat-square&label=%D1%80%D0%B5%D0%BB%D0%B8%D0%B7&color=111114"></a>
-  <a href="https://github.com/kozliq/Tolkovo/releases"><img alt="Скачивания" src="https://img.shields.io/github/downloads/kozliq/Tolkovo/total?style=flat-square&label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B9&color=111114"></a>
-  <img alt="macOS 14+" src="https://img.shields.io/badge/macOS-14%2B-111114?style=flat-square&logo=apple&logoColor=white">
-  <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M1%E2%80%93M5-111114?style=flat-square">
-  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-111114?style=flat-square"></a>
+  <a href="https://github.com/kozliq/Tolkovo/releases/latest"><img alt="Последний релиз" src="https://img.shields.io/github/v/release/kozliq/Tolkovo?style=for-the-badge&label=%D1%80%D0%B5%D0%BB%D0%B8%D0%B7&color=8e2138"></a>
+  <a href="https://github.com/kozliq/Tolkovo/releases"><img alt="Скачивания" src="https://img.shields.io/github/downloads/kozliq/Tolkovo/total?style=for-the-badge&label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B9&color=1b1b20"></a>
+  <img alt="macOS 14+" src="https://img.shields.io/badge/macOS-14%2B-1b1b20?style=for-the-badge&logo=apple&logoColor=white">
+  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/%D0%BB%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F-MIT-1b1b20?style=for-the-badge"></a>
+</p>
+
+<h3 align="center">Нажал <kbd>⌥ Space</kbd>, сказал — текст уже там, где курсор.</h3>
+
+<p align="center">
+  В Telegram, в браузере, в ChatGPT и Claude. Без интернета, по-русски, бесплатно навсегда.
 </p>
 
 <p align="center">
-  <a href="https://github.com/kozliq/Tolkovo/releases/latest"><b>Скачать</b></a> ·
-  <a href="#как-это-работает">Как это работает</a> ·
-  <a href="#приватность">Приватность</a> ·
-  <a href="#вопросы">Вопросы</a> ·
+  <a href="https://github.com/kozliq/Tolkovo/releases/latest"><b>⬇ Скачать для Mac</b></a>
+  &nbsp;·&nbsp;
+  <a href="#установка">Установка</a>
+  &nbsp;·&nbsp;
+  <a href="#приватность">Приватность</a>
+  &nbsp;·&nbsp;
+  <a href="#вопросы">Вопросы</a>
+  &nbsp;·&nbsp;
   <a href="#english">English</a>
 </p>
 
 <br>
 
-<!-- Сюда — GIF 10–15 секунд: хоткей → красная пилюля → говоришь → текст появляется в Telegram.
-     Записать: Cmd+Shift+5 → «Записать выбранную область», потом сконвертировать в GIF через gifski.
-<p align="center"><img src=".github/assets/demo.gif" width="720" alt="Демонстрация"></p>
--->
+<p align="center">
+  <img src=".github/assets/demo.svg" width="100%" alt="Демонстрация: нажата ⌥ Space, пилюля наливается бордовым, слова появляются в пузыре, после отпускания текст вставляется в чат">
+</p>
 
-Нажал хоткей. Сказал. Текст уже стоит там, где был курсор — в Telegram, в браузере, в Notion, в терминале, где угодно.
-
-Tolkovo распознаёт речь **прямо на твоём Mac**, без интернета и без подписок. По умолчанию работает на **GigaAM v3** — открытой модели, обученной именно на русской речи, поэтому понимает нас лучше универсальных англоязычных моделей.
-
-## Установка
-
-1. Скачай **[Tolkovo.dmg](https://github.com/kozliq/Tolkovo/releases/latest)** и перетащи значок в «Программы».
-2. Запусти и выдай два разрешения: **микрофон** и **Универсальный доступ** — второе нужно, чтобы вставлять текст в чужие окна.
-3. Дождись загрузки модели при первом запуске. Дальше — полностью офлайн.
-
-<details>
-<summary>macOS говорит, что приложение «повреждено» или «от неустановленного разработчика»</summary>
 <br>
 
-Сборка пока не нотаризована Apple — это стоит $99 в год, и мы до этого ещё дорастём. Лечится одной командой в Терминале:
+<p align="center">
+  <img src=".github/assets/how.svg" width="100%" alt="Три движения: нажми ⌥ Space, говори, отпусти">
+</p>
 
-```bash
-xattr -dr com.apple.quarantine /Applications/Tolkovo.app
-```
+<p align="center">
+  <img src=".github/assets/speed.svg" width="100%" alt="Печать около 40 слов в минуту, голос около 130">
+</p>
 
-Это снимает с файла пометку «скачано из интернета». Сам код открыт — каждую строчку можно прочитать в этом репозитории.
-</details>
-
-## Как это работает
-
-| | |
-|---|---|
-| **Горячая клавиша** | Назначаешь при первом запуске. Два режима: зажал — говоришь — отпустил, или нажал для старта и ещё раз для стопа |
-| **Индикатор** | Маленькая плавающая пилюля: чёрная — ждёт, красная — слушает |
-| **Распознавание** | GigaAM v3 для русского, Whisper и Parakeet для остальных языков |
-| **Вставка** | Текст вставляется в активное поле, буфер обмена после этого восстанавливается |
+<p align="center">
+  <img src=".github/assets/dictionary.svg" width="100%" alt="Словарь: гитхаб → GitHub, телега → Telegram, пул реквест → pull request">
+</p>
 
 ## Приватность
 
-Звук обрабатывается в памяти и никуда не уходит. Никакой телеметрии, аккаунтов, рекламы и облака. Единственное обращение в сеть — однократная загрузка модели распознавания.
+<p align="center">
+  <img src=".github/assets/privacy.svg" width="100%" alt="0 байт твоего голоса уходит в интернет">
+</p>
 
-Не верь на слово — проверь: код открыт, а каждый релиз собирается GitHub Actions прямо из этого репозитория с криптографическим подтверждением происхождения.
+Звук обрабатывается в памяти и сразу стирается. Ни звук, ни текст никуда не отправляются. Нет аккаунтов, телеметрии, аналитики и облака — программа ничего о тебе не собирает. Единственное обращение в сеть за всё время: один раз скачать модель распознавания.
+
+Разрешение «Универсальный доступ» нужно ровно для одного действия — нажать «вставить» за тебя в активном окне. Tolkovo не читает, что ты печатаешь, и не видит содержимое других программ.
+
+**Не верь на слово — проверь.** Код открыт, а каждый релиз собирается на серверах GitHub прямо из этого репозитория и подтверждается криптографической подписью происхождения:
 
 ```bash
 gh attestation verify Tolkovo.dmg --repo kozliq/Tolkovo
 ```
 
+## Установка
+
+1. Скачай **[Tolkovo.dmg](https://github.com/kozliq/Tolkovo/releases/latest)** и перетащи значок в «Программы».
+2. Один раз выполни в Терминале:
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/Tolkovo.app
+   ```
+   Программа пока не подписана платным сертификатом Apple. Команда снимает пометку «скачано из интернета» — после этого macOS запускает её как обычно.
+3. Открой Tolkovo, разреши микрофон и вставку текста. Модель скачается сама — и можно говорить.
+
+Нужен Mac на Apple Silicon (M1 и новее) с macOS 14 или свежее.
+
 ## Что дальше
 
-- [x] Локальное распознавание русской речи на GigaAM v3
+<p align="center">
+  <img src=".github/assets/wrapped.svg" width="100%" alt="Итоги месяца — скоро">
+</p>
+
+- [x] Распознавание русской речи прямо на Mac
 - [x] Работа в любом приложении
-- [ ] Установка в один клик, русский интерфейс без единой настройки
-- [ ] Новый индикатор-пилюля и минималистичный дизайн
-- [ ] «Чистка» речи: убрать «ну», «короче», «эээ», поправить знаки препинания — тоже локально
-- [ ] Страница проекта и статья на Хабре
+- [ ] Первый запуск без единой настройки и стеклянная пилюля
+- [ ] Личный словарь англицизмов
+- [ ] Живой текст — слова видно прямо во время речи
+- [ ] Голосовые команды: «новая строка», «точка»
+- [ ] «Итоги месяца» — всё считается только у тебя
 
 Есть идея или нашёл баг — [открой issue](https://github.com/kozliq/Tolkovo/issues/new/choose).
 
 ## Вопросы
 
 <details>
-<summary>Это бесплатно? Где подвох?</summary>
+<summary><b>Правда бесплатно? Где подвох?</b></summary>
 <br>
-Бесплатно навсегда. Подвоха нет: программа работает на твоём компьютере, серверов у нас нет, поэтому и брать деньги не за что. Если хочется отблагодарить — есть <a href="DONATE.md">донаты</a>, но это полностью добровольно и ни на что не влияет.
+Подвоха нет. Программа работает на твоём компьютере, серверов у проекта нет — брать деньги не за что. Никакие функции никогда не станут платными. Если хочется сказать спасибо — есть <a href="DONATE.md">добровольная поддержка</a>, но она ни на что не влияет.
 </details>
 
 <details>
-<summary>Нужен ли интернет?</summary>
+<summary><b>Нужен ли интернет?</b></summary>
 <br>
-Только один раз — чтобы скачать модель. Потом можно хоть в самолёте.
+Только один раз — чтобы скачать модель. Дальше можно хоть в самолёте.
 </details>
 
 <details>
-<summary>На каких маках работает?</summary>
+<summary><b>А английские слова понимает?</b></summary>
 <br>
-На любых с Apple Silicon (M1 и новее) и macOS 14 или свежее.
+Модель заточена под русский, поэтому английские слова иногда пишет по-русски. Для этого есть словарь: «гитхаб» сам станет GitHub. Свои замены добавляются в настройках.
 </details>
 
 <details>
-<summary>А Windows?</summary>
+<summary><b>Будет версия для Windows?</b></summary>
 <br>
-Ядро кроссплатформенное, так что технически это возможно. Сейчас фокус — сделать идеальную версию для Mac.
+Ядро кроссплатформенное, так что технически это возможно. Сейчас главное — сделать идеальную версию для Mac.
 </details>
+
+<details>
+<summary><b>На чём это сделано?</b></summary>
+<br>
+Tolkovo — форк открытого проекта <a href="https://github.com/cjpais/Handy">Handy</a> от CJ Pais. От него — надёжное ядро записи и распознавания, от нас — всё, что ты видишь и трогаешь.
+</details>
+
+## Кто делает
+
+Меня зовут **kozliq**. Я не программист из Кремниевой долины — я парень из Омска, который захотел, чтобы печатать голосом было так же просто, как говорить. Tolkovo я собираю вместе с Claude: GitHub и нейросети у нас те же, что у ребят из Сан-Франциско, а остальное — упорство.
+
+Следить за разработкой: [Telegram-канал](ССЫЛКА_НА_КАНАЛ)
 
 ## Поддержать
 
-Если Tolkovo экономит тебе время — [угости кофе](DONATE.md). А ещё больше помогает ⭐ этому репозиторию и рассказ друзьям.
+Tolkovo бесплатный и таким останется. Больше всего помогает ⭐ этому репозиторию и рассказ друзьям. А если хочется поблагодарить иначе — [страница поддержки](DONATE.md).
 
 ## Благодарности
 
-Tolkovo — форк **[Handy](https://github.com/cjpais/Handy)** от CJ Pais. Всё ядро — запись, распознавание, вставка текста — сделано ими, и без их открытого кода этого проекта бы не было. Если тебе нужна англоязычная, кроссплатформенная версия — иди к ним.
+Tolkovo — форк **[Handy](https://github.com/cjpais/Handy)** от CJ Pais: всё ядро записи, распознавания и вставки текста сделано ими, и без их открытого кода этого проекта бы не было. Если нужна англоязычная кроссплатформенная версия — иди к ним.
 
-Также спасибо командам **GigaAM** (SberDevices) за открытую русскую модель, **whisper.cpp** и **Tauri**.
+Спасибо командам **GigaAM** (SberDevices) за открытую русскую модель, **transcribe.cpp**, **Tauri** и **Anthropic** за Claude, с которым написан этот проект.
 
 ## Лицензия
 
@@ -129,9 +154,9 @@ Tolkovo — форк **[Handy](https://github.com/cjpais/Handy)** от CJ Pais. 
 <summary><b>English</b></summary>
 <br>
 
-**Tolkovo** is a free, offline, privacy-first voice typing app for macOS, tuned for Russian speakers. Press a hotkey, speak, and the text appears wherever your cursor is. Runs GigaAM v3 locally for Russian, with Whisper and Parakeet for other languages. No cloud, no telemetry, no accounts.
+**Tolkovo** is a free, offline, privacy-first voice typing app for macOS, made for Russian speakers. Press <kbd>⌥ Space</kbd>, speak, and the text appears wherever your cursor is. Runs GigaAM v3 locally — a model trained on Russian speech. No cloud, no telemetry, no accounts.
 
-It's a fork of the excellent [Handy](https://github.com/cjpais/Handy) — if you want the original cross-platform, English-first experience, go there.
+Made by kozliq from Omsk, together with Claude. A fork of the excellent [Handy](https://github.com/cjpais/Handy) — for the original cross-platform, English-first experience, go there.
 </details>
 
 <p align="center">
