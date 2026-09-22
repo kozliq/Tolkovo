@@ -23,7 +23,8 @@ export const Settings = ({ onAdvanced }: SettingsProps) => {
       .then(setPillMode)
       .catch(() => {});
     getVersion()
-      .then(setVersion)
+      // "0.1.0" reads as "0.1", like the mockup.
+      .then((v) => setVersion(v.replace(/\.0$/, "")))
       .catch(() => {});
   }, []);
 

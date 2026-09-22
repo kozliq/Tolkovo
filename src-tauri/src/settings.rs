@@ -542,7 +542,8 @@ fn default_start_hidden() -> bool {
 }
 
 fn default_autostart_enabled() -> bool {
-    false
+    // Tolkovo: start at login by default (TOLKOVO.md).
+    true
 }
 
 fn default_update_checks_enabled() -> bool {

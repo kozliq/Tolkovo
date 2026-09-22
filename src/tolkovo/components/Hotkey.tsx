@@ -18,7 +18,11 @@ export const formatHotkey = (binding: string | undefined): string => {
   return (binding || "option+space")
     .split("+")
     .map((part) => {
-      const key = part.trim().toLowerCase();
+      // Handy keys records side-specific modifiers ("option_left").
+      const key = part
+        .trim()
+        .toLowerCase()
+        .replace(/_(left|right)$/, "");
       return names[key] ?? (key.length === 1 ? key.toUpperCase() : part);
     })
     .join(" ");

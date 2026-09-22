@@ -457,6 +457,9 @@ fn version_label() -> String {
 /// process-constant `HANDY_DISABLE_UPDATER` env flag behind
 /// `update_checks_forced_disabled()`, which cannot change during a run.
 fn build_menu(app: &AppHandle, inputs: &MenuInputs) -> tauri::Result<(Menu<tauri::Wry>, String)> {
+    if crate::tolkovo::menu::ENABLED {
+        return crate::tolkovo::menu::build(app, inputs.busy);
+    }
     let strings = get_tray_translations(Some(inputs.locale.clone()));
 
     // Secure Input warning entry (macOS): clicking opens the settings window
