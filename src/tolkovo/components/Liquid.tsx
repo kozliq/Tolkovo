@@ -18,10 +18,14 @@ interface LiquidProps {
 
 // Surface: a chain of damped springs (a 1-D wave equation). Enough columns
 // for a smooth curve at 64 px, few enough to be cheap.
-const COLUMNS = 22;
-const TENSION = 0.028; // pull back to rest
-const DAMPING = 0.045; // energy loss per step
-const SPREAD = 0.22; // how much each column drags its neighbours
+// Tuned offline (see the physics harness in the PR notes): swells up to
+// ~5 px, a smooth surface, and calm again ~3 s after you stop talking.
+const COLUMNS = 12;
+const TENSION = 0.004; // pull back to rest (low = slow, heavy swell)
+const DAMPING = 0.02; // energy loss per step
+const SPREAD = 0.25; // how much each column drags its neighbours
+const SPREAD_PASSES = 4; // more passes = smoother, rounder surface
+const VOICE_EVERY = 0.16; // s between voice swells
 const STEP = 1 / 120; // fixed physics step (s)
 
 const reducedMotion = () =>
@@ -29,9 +33,9 @@ const reducedMotion = () =>
 
 /**
  * Burgundy water drawn on a canvas and moved by a tiny physics simulation:
- * a spring-chain surface with a meniscus at the glass, a sloshing tilt with
- * inertia (drag the pill and the water lags behind), voice ripples and a few
- * bubbles. The loop sleeps when the water is still.
+ * a smooth spring-chain surface with a meniscus at the glass, a slow sloshing
+ * tilt with inertia (drag the pill and the water lags behind) and broad
+ * swells from the voice. The loop sleeps when the water is still.
  */
 export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
   ({ width, height, fill, level, settle = 0.5 }, ref) => {
@@ -45,7 +49,7 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
       lvlV: 0,
       target: fill,
       voice: 0,
-      bubbles: [] as { x: number; y: number; r: number; vy: number }[],
+      voiceClock: 0,
       raf: 0,
       last: 0,
       acc: 0,
@@ -59,9 +63,9 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
       nudge: (dx, dy) => {
         const s = sim.current;
         // Water lags behind the glass: moving right tilts it up on the left.
-        s.tiltV += Math.max(-60, Math.min(60, -dx * 0.9));
+        s.tiltV += Math.max(-40, Math.min(40, -dx * 0.6));
         // A vertical jolt bounces the whole surface.
-        const kick = Math.max(-6, Math.min(6, dy * 0.12));
+        const kick = Math.max(-3, Math.min(3, dy * 0.06));
         for (let i = 0; i < COLUMNS; i++) s.v[i] += kick;
         wake.current();
       },
@@ -93,7 +97,11 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
         // Level: a lightly under-damped spring, so it overshoots a touch.
         const w = (2 * Math.PI) / Math.max(0.15, settleRef.current * 1.6);
         const zeta = 0.72;
-        const a = w * w * (s.target - s.lvl) - 2 * zeta * w * s.lvlV;
+        // The water breathes with the voice: louder speech lifts it a little,
+        // pauses let it sink back — the clearest sign you are being heard.
+        const lift = s.target > 0 ? Math.min(1, s.voice * 1.8) * 9 : 0;
+        const goal = Math.min(97, s.target + lift);
+        const a = w * w * (goal - s.lvl) - 2 * zeta * w * s.lvlV;
         s.lvlV += a * STEP;
         s.lvl += s.lvlV * STEP;
         if (still) {
@@ -101,28 +109,32 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
           s.lvlV = 0;
         }
 
-        // Rising or falling water sloshes a little on its own.
-        s.tiltV += s.lvlV * 0.004 * (Math.random() - 0.5) * 60;
+        // Rising water leans a touch, then settles.
+        s.tiltV += s.lvlV * 0.02;
 
-        // Tilt: a damped pendulum.
-        s.tiltV += (-18 * s.tilt - 2.2 * s.tiltV) * STEP;
+        // Tilt: a slow, heavy pendulum.
+        s.tiltV += (-9 * s.tilt - 1.9 * s.tiltV) * STEP;
         s.tilt += s.tiltV * STEP;
 
-        // Voice: small random pushes, stronger with louder speech.
-        if (s.voice > 0.02 && !still) {
-          const n = 1 + Math.floor(s.voice * 3);
-          for (let k = 0; k < n; k++) {
-            const i = Math.floor(Math.random() * COLUMNS);
-            s.v[i] += (Math.random() - 0.5) * s.voice * 5.5;
+        // Voice: a few broad swells per second, never needle-like spikes.
+        s.voiceClock += STEP;
+        if (s.voice > 0.02 && !still && s.voiceClock >= VOICE_EVERY) {
+          s.voiceClock = 0;
+          const c = Math.random() * (COLUMNS - 1);
+          const amp = (Math.random() * 0.6 + 0.4) * s.voice * 1.2;
+          const dir = Math.random() < 0.5 ? -1 : 1;
+          for (let i = 0; i < COLUMNS; i++) {
+            const d = (i - c) / 3.2;
+            s.v[i] += dir * amp * Math.exp(-d * d);
           }
-          s.tiltV += (Math.random() - 0.5) * s.voice * 6;
+          s.tiltV += dir * s.voice * 3;
         }
 
         // Spring chain.
         for (let i = 0; i < COLUMNS; i++) {
           s.v[i] += -TENSION * s.h[i] - DAMPING * s.v[i];
         }
-        for (let pass = 0; pass < 2; pass++) {
+        for (let pass = 0; pass < SPREAD_PASSES; pass++) {
           for (let i = 0; i < COLUMNS; i++) {
             if (i > 0) s.v[i - 1] += SPREAD * (s.h[i] - s.h[i - 1]) * 0.5;
             if (i < COLUMNS - 1)
@@ -130,20 +142,6 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
           }
         }
         for (let i = 0; i < COLUMNS; i++) s.h[i] += s.v[i];
-
-        // Bubbles: a few while speaking.
-        if (!still && s.voice > 0.08 && Math.random() < s.voice * 0.35) {
-          s.bubbles.push({
-            x: width * (0.2 + Math.random() * 0.6),
-            y: height - 4,
-            r: 0.7 + Math.random() * 1.3,
-            vy: 18 + Math.random() * 22,
-          });
-        }
-        for (const b of s.bubbles) {
-          b.y -= b.vy * STEP;
-          b.x += Math.sin(b.y * 0.15) * 0.08;
-        }
       };
 
       const draw = () => {
@@ -202,13 +200,6 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
         sheen.addColorStop(1, "rgba(255,170,190,0)");
         ctx.fillStyle = sheen;
         ctx.fillRect(0, top - 2, width, 18);
-        // Bubbles.
-        for (const b of s.bubbles) {
-          ctx.beginPath();
-          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(255,210,220,0.28)";
-          ctx.fill();
-        }
         ctx.restore();
 
         // The meniscus line: a thin, bright edge where water meets air.
@@ -217,17 +208,14 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
         ctx.lineWidth = 1;
         ctx.strokeStyle = "rgba(255,200,212,0.55)";
         ctx.stroke();
-
-        // Drop bubbles that reached the surface.
-        s.bubbles = s.bubbles.filter((b) => b.y > top + 2);
       };
 
       const calm = () => {
         let e = Math.abs(s.tilt) + Math.abs(s.tiltV) + Math.abs(s.lvlV);
-        e += Math.abs(s.target - s.lvl);
+        e += Math.abs(s.target - s.lvl) * (s.voice > 0.02 ? 0 : 1);
         for (let i = 0; i < COLUMNS; i++)
           e += Math.abs(s.h[i]) + Math.abs(s.v[i]);
-        return e < 0.05 && s.voice <= 0.02 && s.bubbles.length === 0;
+        return e < 0.05 && s.voice <= 0.02;
       };
 
       const frame = (now: number) => {

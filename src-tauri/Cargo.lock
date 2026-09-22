@@ -2546,6 +2546,7 @@ name = "handy"
 version = "0.9.7"
 dependencies = [
  "anyhow",
+ "block2",
  "chrono",
  "clap",
  "cpal",

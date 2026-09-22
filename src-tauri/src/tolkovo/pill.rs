@@ -34,7 +34,7 @@ const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 /// How long the drain animation runs before a "when recording" pill hides.
 const DRAIN_MS: u64 = 700;
 /// Length of the "melts into a blob" leave animation in the pill webview.
-const LEAVE_MS: u64 = 560;
+const LEAVE_MS: u64 = 600;
 /// Voice level updates sent to the pill (the wave follows your voice).
 const LEVEL_THROTTLE_MS: u64 = 40;
 
@@ -210,11 +210,13 @@ pub fn create(app: &AppHandle) {
                     .accept_first_mouse(true)
                     .skip_taskbar(true)
             })
+            // Not pinned to every Space: on a Space switch the pill slides
+            // away with the old desktop and is reborn on the new one as a
+            // gathering blob (see watch_space_changes).
             .collection_behavior(
                 CollectionBehavior::new()
-                    .can_join_all_spaces()
-                    .full_screen_auxiliary()
-                    .stationary(),
+                    .move_to_active_space()
+                    .full_screen_auxiliary(),
             )
             .build()
         {
@@ -266,36 +268,58 @@ pub fn create(app: &AppHandle) {
 
     refresh_visibility(app);
     #[cfg(target_os = "macos")]
-    watch_frontmost_app(app);
+    watch_space_changes(app);
 }
 
-/// When the user switches to another app (including a full-screen one on its
-/// own Space) the pill stays where it is and does a small jelly "hop", so the
-/// change reads as the same pill following you rather than a new window.
+/// On every Space switch (swiping between desktops, entering a full-screen
+/// app) the pill is reborn on the new Space: the webview hides it, the panel
+/// is re-ordered onto the active Space, and it gathers from a blurred blob.
 #[cfg(target_os = "macos")]
-fn watch_frontmost_app(app: &AppHandle) {
-    use std::sync::atomic::AtomicI32;
-    static LAST_PID: AtomicI32 = AtomicI32::new(0);
+fn watch_space_changes(app: &AppHandle) {
+    use block2::RcBlock;
+    use objc2_app_kit::{NSWorkspace, NSWorkspaceActiveSpaceDidChangeNotification};
+    use objc2_foundation::NSNotification;
+    use std::ptr::NonNull;
+
     let app = app.clone();
-    std::thread::spawn(move || loop {
-        std::thread::sleep(Duration::from_millis(250));
+    let block = RcBlock::new(move |_: NonNull<NSNotification>| {
+        let visible = app
+            .get_webview_window(PILL_LABEL)
+            .map(|w| w.is_visible().unwrap_or(false))
+            .unwrap_or(false);
+        if visible {
+            reborn(&app);
+        }
+    });
+    unsafe {
+        let center = NSWorkspace::sharedWorkspace().notificationCenter();
+        let observer = center.addObserverForName_object_queue_usingBlock(
+            Some(NSWorkspaceActiveSpaceDidChangeNotification),
+            None,
+            None,
+            &block,
+        );
+        // Lives for the whole app run.
+        std::mem::forget(observer);
+    }
+}
+
+/// Move the pill onto the active Space and play the "gathers from a blob"
+/// entrance. The webview first goes invisible, so the re-order never flashes.
+fn reborn(app: &AppHandle) {
+    let _ = app.emit_to(PILL_LABEL, "tk-pill-prep", ());
+    let app = app.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(40));
         let handle = app.clone();
         let _ = app.run_on_main_thread(move || {
-            use objc2_app_kit::NSWorkspace;
-            let pid = NSWorkspace::sharedWorkspace()
-                .frontmostApplication()
-                .map(|a| a.processIdentifier())
-                .unwrap_or(0);
-            let previous = LAST_PID.swap(pid, Ordering::Relaxed);
-            if previous == 0 || previous == pid || pid == std::process::id() as i32 {
-                return;
-            }
             if let Some(w) = handle.get_webview_window(PILL_LABEL) {
-                if w.is_visible().unwrap_or(false) {
-                    let _ = w.emit_to(PILL_LABEL, "tk-pill-hop", ());
-                }
+                let _ = w.hide();
+                let _ = w.show();
             }
         });
+        std::thread::sleep(Duration::from_millis(40));
+        let _ = app.emit_to(PILL_LABEL, "tk-pill-visible", true);
     });
 }
 

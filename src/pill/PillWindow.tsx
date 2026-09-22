@@ -7,7 +7,7 @@ import "@/tolkovo/tolkovo.css";
 import "./pill.css";
 
 type PillState = "idle" | "recording" | "draining";
-type Anim = "enter" | "leave" | "hop" | null;
+type Anim = "enter" | "leave" | "gone" | null;
 
 /** Pixels the pointer must travel before a press becomes a drag. */
 const DRAG_THRESHOLD = 3;
@@ -19,8 +19,9 @@ const RECORDING_FILL = 76;
 
 /**
  * The floating pill window. Fills with burgundy water while recording,
- * reacts to the voice, drains after. Melts into a blob when it hides,
- * gathers back when it shows, and wobbles when you switch apps. Drag to move
+ * reacts to the voice, drains after. Melts into a blob when it hides and
+ * gathers back from one when it shows — including on every Space switch,
+ * where it is reborn on the new desktop. Drag to move
  * (the water sloshes behind), click to start/stop recording.
  */
 const PillWindow = () => {
@@ -59,13 +60,20 @@ const PillWindow = () => {
           v > smooth.current ? v : smooth.current * 0.82 + v * 0.18;
         setLevel(smooth.current);
       }),
-      listen<boolean>("tk-pill-visible", (e) =>
-        setAnim(e.payload ? "enter" : "leave"),
-      ),
-      listen("tk-pill-hop", () => {
-        setAnim((a) => (a === "leave" ? a : "hop"));
-        water.current?.nudge((Math.random() - 0.5) * 30, 12);
+      listen<boolean>("tk-pill-visible", (e) => {
+        if (!e.payload) {
+          setAnim("leave");
+          return;
+        }
+        // Start the entrance only once the (re)shown window has painted, so
+        // its first frames are not lost while the panel is being ordered in.
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => setAnim("enter")),
+        );
       }),
+      // A Space switch: go invisible before the panel is moved to the new
+      // Space, then "tk-pill-visible" gathers it back from a blob.
+      listen("tk-pill-prep", () => setAnim("gone")),
     ];
     return () => {
       subs.forEach((p) => p.then((fn) => fn()));
@@ -139,7 +147,7 @@ const PillWindow = () => {
       <div
         className="tk-pill-hit"
         data-anim={anim ?? undefined}
-        onAnimationEnd={() => anim !== "leave" && setAnim(null)}
+        onAnimationEnd={() => anim === "enter" && setAnim(null)}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
