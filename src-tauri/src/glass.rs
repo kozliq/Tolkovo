@@ -19,6 +19,12 @@ pub fn configure_main_window<'a, R: Runtime, M: Manager<R>>(
         .transparent(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
+        // Tolkovo windows have fixed sizes from the mockups; the frontend
+        // switches between onboarding (620×500) and settings (640×600).
+        .inner_size(620.0, 500.0)
+        .min_inner_size(620.0, 500.0)
+        .resizable(false)
+        .maximizable(false)
 }
 
 #[cfg(not(target_os = "macos"))]
@@ -37,7 +43,11 @@ pub fn apply_to_main_window<R: Runtime>(window: &WebviewWindow<R>) {
         variant: GlassMaterialVariant::Regular,
         ..Default::default()
     };
-    if let Err(e) = window.app_handle().liquid_glass().set_effect(window, config) {
+    if let Err(e) = window
+        .app_handle()
+        .liquid_glass()
+        .set_effect(window, config)
+    {
         log::warn!("Failed to apply Liquid Glass effect: {e}");
     }
 }

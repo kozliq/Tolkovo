@@ -1,0 +1,333 @@
+@import "../styles/theme.css";
+
+/*
+ * Tolkovo window styles, taken from design/*.dc.html and design/README.md.
+ * The window is always dark glass (the mockups have no light variant); the
+ * native Liquid Glass material sits behind the webview on macOS
+ * (src-tauri/src/glass.rs) and this tint sits on top of it.
+ */
+
+:root {
+  --tk-font:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+    sans-serif;
+  --tk-text: rgba(255, 255, 255, 0.95);
+  --tk-text-2: rgba(255, 255, 255, 0.64);
+  --tk-window: rgba(24, 24, 29, 0.64);
+  --tk-group: rgba(255, 255, 255, 0.05);
+  --tk-group-border: rgba(255, 255, 255, 0.08);
+  --tk-divider: rgba(255, 255, 255, 0.07);
+  --tk-control: rgba(255, 255, 255, 0.08);
+  --tk-control-border: rgba(255, 255, 255, 0.22);
+}
+
+.tk-window {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--tk-font);
+  color: var(--tk-text);
+  background: var(--tk-window);
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* No native glass behind the page (non-macOS): keep the window opaque. */
+:root:not([data-platform="macos"]) .tk-window {
+  background: #18181d;
+}
+
+.tk-drag {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 10;
+}
+
+/* ---------- Onboarding ---------- */
+
+.tk-onb {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 46px 44px 28px;
+  box-sizing: border-box;
+}
+
+.tk-h1 {
+  margin: 22px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--tk-text);
+  text-align: center;
+}
+
+.tk-lead {
+  margin: 10px 0 0;
+  max-width: 420px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tk-text-2);
+}
+
+.tk-group {
+  width: 100%;
+  border-radius: 18px;
+  background: var(--tk-group);
+  border: 1px solid var(--tk-group-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.tk-divider {
+  height: 1px;
+  margin: 0 18px;
+  background: var(--tk-group-border);
+}
+
+.tk-perm {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.tk-perm-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  background: var(--tk-control);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tk-perm-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tk-perm-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tk-text);
+}
+
+.tk-perm-text {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--tk-text-2);
+}
+
+.tk-done {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+.tk-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--tk-burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tk-footer {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tk-steps {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tk-steps > div {
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.tk-steps > div[data-active] {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* ---------- Buttons ---------- */
+
+.tk-btn {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 22px;
+  border: none;
+  background: #ffffff;
+  color: #111114;
+  font-family: var(--tk-font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 150ms ease;
+}
+
+.tk-btn:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: default;
+}
+
+.tk-btn:not(:disabled):hover {
+  opacity: 0.9;
+}
+
+.tk-btn-2 {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid var(--tk-control-border);
+  background: var(--tk-control);
+  color: #ffffff;
+  font-family: var(--tk-font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tk-btn-2:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.tk-btn-2:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.tk-btn:focus-visible,
+.tk-btn-2:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* ---------- Download / Ready ---------- */
+
+.tk-pct {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.92);
+  min-height: 20px;
+  text-align: center;
+}
+
+.tk-error {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--tk-text);
+  max-width: 380px;
+}
+
+.tk-keys {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tk-key {
+  min-width: 58px;
+  height: 58px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 18px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--tk-text);
+}
+
+.tk-key-wide {
+  min-width: 150px;
+}
+
+.tk-key-plus {
+  font-size: 22px;
+  color: var(--tk-text-2);
+}
+
+/* ---------- Pill (glass capsule, mic at the bottom) ---------- */
+
+.tk-pill {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+.tk-pill-liquid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--tk-liquid);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tk-pill-mic {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .tk-window {
+    background: #18181d;
+  }
+  .tk-pill {
+    background: rgba(40, 40, 46, 0.96);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

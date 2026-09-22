@@ -21,6 +21,7 @@ mod secure_input;
 mod settings;
 mod shortcut;
 mod signal_handle;
+mod tolkovo;
 mod transcription_coordinator;
 mod tray;
 mod tray_i18n;
@@ -985,6 +986,7 @@ pub fn run(cli_args: CliArgs) {
                 });
             }
 
+            tolkovo::apply_product_settings(app.handle());
             let mut settings = get_settings(app.handle());
 
             // Apply the persisted appearance theme to the native title bar before

@@ -709,5 +709,52 @@
     "learnMore": "How to fix",
     "recorderBlocked": "Can't record shortcuts right now — macOS Secure Input is blocking key events. Resolve the Secure Input warning first.",
     "dismiss": "Dismiss"
+  },
+  "tolkovo": {
+    "welcome": {
+      "title": "Hi. This is Tolkovo.",
+      "text": "Press {{hotkey}} and speak — the text appears where your cursor is. Everything runs right on your Mac.",
+      "mic": {
+        "title": "Microphone",
+        "text": "To hear you. The recording never leaves your Mac."
+      },
+      "paste": {
+        "title": "Typing text",
+        "text": "Accessibility — to type for you in any window."
+      },
+      "allow": "Allow",
+      "waiting": "Waiting…",
+      "granted": "Done",
+      "next": "Next"
+    },
+    "download": {
+      "title": "Learning to understand Russian",
+      "text": "This happens once. After that Tolkovo works offline — even on a plane.",
+      "almost": "Almost ready…",
+      "failed": "That didn't work. Check your internet and try again.",
+      "retry": "Try again"
+    },
+    "ready": {
+      "title": "Done. Speak.",
+      "text": "You can close this window — Tolkovo waits in the menu bar. Drag the pill anywhere on the screen.",
+      "try": "Try it"
+    },
+    "step": "Step {{current}} of {{total}}",
+    "keys": {
+      "option": "⌥",
+      "space": "Space",
+      "plus": "+"
+    },
+    "errors": {
+      "micTitle": "No microphone access",
+      "micText": "Let Tolkovo hear you: System Settings → Privacy → Microphone.",
+      "noMicTitle": "No microphone found",
+      "noMicText": "Connect a microphone and try again.",
+      "recordTitle": "Couldn't record",
+      "pasteTitle": "Couldn't paste the text",
+      "pasteText": "The text is on the clipboard — paste it with ⌘V.",
+      "recognizeTitle": "Couldn't understand the speech",
+      "tryAgain": "Please try again."
+    }
   }
 }
