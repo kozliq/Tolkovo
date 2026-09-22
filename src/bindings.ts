@@ -5,6 +5,30 @@
 
 
 export const commands = {
+/**
+ * Re-evaluate what Tolkovo shows after the first run finishes.
+ */
+async tolkovoOnboardingFinished() : Promise<void> {
+    await TAURI_INVOKE("tolkovo_onboarding_finished");
+},
+/**
+ * Click on the pill: start or stop recording, like the hotkey.
+ */
+async tolkovoPillClick() : Promise<void> {
+    await TAURI_INVOKE("tolkovo_pill_click");
+},
+/**
+ * Current pill state, for a pill webview that (re)loads mid-recording.
+ */
+async tolkovoPillState() : Promise<string> {
+    return await TAURI_INVOKE("tolkovo_pill_state");
+},
+async tolkovoGetPillMode() : Promise<PillMode> {
+    return await TAURI_INVOKE("tolkovo_get_pill_mode");
+},
+async tolkovoSetPillMode(mode: PillMode) : Promise<void> {
+    await TAURI_INVOKE("tolkovo_set_pill_mode", { mode });
+},
 async changeBinding(id: string, binding: string) : Promise<Result<BindingResponse, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("change_binding", { id, binding }) };
@@ -1076,6 +1100,18 @@ export type OverlayStyle = "none" | "minimal" | "live"
 export type PaginatedHistory = { entries: HistoryEntry[]; has_more: boolean }
 export type PasteMethod = "ctrl_v" | "direct" | "none" | "shift_insert" | "ctrl_shift_v" | "external_script"
 export type PermissionAccess = "allowed" | "denied" | "unknown"
+/**
+ * When the pill is on screen.
+ */
+export type PillMode = 
+/**
+ * Always on screen (default).
+ */
+"always" | 
+/**
+ * Only while recording and transcribing.
+ */
+"while_recording"
 export type PostProcessProvider = { id: string; label: string; base_url: string; allow_base_url_edit?: boolean; models_endpoint?: string | null; supports_structured_output?: boolean }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
 export type SecretMap = Partial<{ [key in string]: string }>

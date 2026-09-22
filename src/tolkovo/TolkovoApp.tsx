@@ -108,7 +108,15 @@ export const TolkovoApp = () => {
   let content = null;
   if (stage === "welcome") content = <Welcome onNext={afterWelcome} />;
   else if (stage === "download")
-    content = <Download onDone={() => setStage("ready")} />;
+    content = (
+      <Download
+        onDone={() => {
+          setStage("ready");
+          // The first run is done: the pill appears now.
+          commands.tolkovoOnboardingFinished().catch(() => {});
+        }}
+      />
+    );
   else if (stage === "ready") content = <Ready onFinish={finish} />;
 
   if (stage === "settings") {

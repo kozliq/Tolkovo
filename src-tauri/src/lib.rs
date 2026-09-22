@@ -650,6 +650,11 @@ pub fn run(cli_args: CliArgs) {
 
     let specta_builder = Builder::<tauri::Wry>::new()
         .commands(collect_commands![
+            tolkovo::tolkovo_onboarding_finished,
+            tolkovo::pill::tolkovo_pill_click,
+            tolkovo::pill::tolkovo_pill_state,
+            tolkovo::pill::tolkovo_get_pill_mode,
+            tolkovo::pill::tolkovo_set_pill_mode,
             shortcut::change_binding,
             shortcut::reset_binding,
             shortcut::change_shortcut_activation_setting,
@@ -1014,6 +1019,7 @@ pub fn run(cli_args: CliArgs) {
             app.manage(TranscriptionCoordinator::new(app_handle.clone()));
 
             initialize_core_logic(&app_handle);
+            tolkovo::init(&app_handle);
 
             // Secure Input monitor (macOS): detects stuck secure input that
             // silently blocks keyed shortcuts, warns the user, and activates
