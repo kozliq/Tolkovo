@@ -21,7 +21,13 @@ mockIPC((cmd) => {
       },
       onboarding_completed: false,
       selected_model: "",
+      autostart_enabled: true,
+      audio_feedback: false,
+      paste_method: "ctrl_v",
+      selected_microphone: "Default",
     };
+  if (cmd === "tolkovo_get_pill_mode") return "always";
+  if (cmd === "plugin:app|version") return "0.1.0";
   if (cmd === "get_available_models") return [];
   return null;
 });
@@ -76,7 +82,8 @@ const backdrop: React.CSSProperties = {
   justifyContent: "center",
   overflow: "hidden",
 };
-const size = screen === "settings" ? [640, 600] : [620, 500];
+const size =
+  screen === "settings" || screen === "advanced" ? [640, 600] : [620, 500];
 
 const Frame = ({ children }: { children: React.ReactNode }) => (
   <div style={backdrop}>
@@ -101,10 +108,23 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const Settings =
-  screen === "settings"
-    ? (await import("./settings/Settings")).Settings
-    : () => null;
+const { Settings } = await import("./settings/Settings");
+const { Advanced } = await import("./settings/Advanced");
+if (screen === "advanced") {
+  const base = { is_downloaded: true, supported_languages: ["ru"] };
+  useModelStore.setState({
+    models: [
+      { ...base, id: TOLKOVO_MODEL_ID, name: "GigaAM v3 E2E-RNN-T" },
+      {
+        ...base,
+        id: "w",
+        name: "Whisper Large v3 Turbo",
+        is_downloaded: false,
+      },
+    ],
+    currentModel: TOLKOVO_MODEL_ID,
+  } as never);
+}
 
 const content =
   screen === "download" ? (
@@ -113,6 +133,8 @@ const content =
     <Ready onFinish={noop} />
   ) : screen === "settings" ? (
     <Settings />
+  ) : screen === "advanced" ? (
+    <Advanced onBack={noop} />
   ) : screen === "pill" ? null : (
     <Welcome onNext={noop} />
   );

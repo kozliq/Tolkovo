@@ -8,15 +8,22 @@ import {
 } from "tauri-plugin-macos-permissions-api";
 import { commands } from "@/bindings";
 import { useSettingsStore } from "@/stores/settingsStore";
-import App from "@/App";
 import { Welcome } from "./onboarding/Welcome";
 import { Download } from "./onboarding/Download";
 import { Ready } from "./onboarding/Ready";
+import { Settings } from "./settings/Settings";
+import { Advanced } from "./settings/Advanced";
 import { useErrorToasts } from "./useErrorToasts";
 import { closeWindow, resizeWindow } from "./window";
 import "./tolkovo.css";
 
-type Stage = "loading" | "welcome" | "download" | "ready" | "settings";
+type Stage =
+  | "loading"
+  | "welcome"
+  | "download"
+  | "ready"
+  | "settings"
+  | "advanced";
 
 const hasPermissions = async (): Promise<boolean> => {
   if (platform() !== "macos") return true;
@@ -86,7 +93,9 @@ export const TolkovoApp = () => {
 
   useEffect(() => {
     if (stage === "loading") return;
-    resizeWindow(stage === "settings" ? "settings" : "onboarding");
+    resizeWindow(
+      stage === "settings" || stage === "advanced" ? "settings" : "onboarding",
+    );
   }, [stage]);
 
   const afterWelcome = () => {
@@ -118,11 +127,10 @@ export const TolkovoApp = () => {
       />
     );
   else if (stage === "ready") content = <Ready onFinish={finish} />;
-
-  if (stage === "settings") {
-    // Temporary: Handy's settings until the Tolkovo settings window lands.
-    return <App />;
-  }
+  else if (stage === "settings")
+    content = <Settings onAdvanced={() => setStage("advanced")} />;
+  else if (stage === "advanced")
+    content = <Advanced onBack={() => setStage("settings")} />;
 
   return (
     <div className="tk-window">

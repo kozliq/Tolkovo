@@ -755,6 +755,60 @@
       "pasteText": "The text is on the clipboard — paste it with ⌘V.",
       "recognizeTitle": "Couldn't understand the speech",
       "tryAgain": "Please try again."
+    },
+    "settings": {
+      "title": "Settings",
+      "hotkey": {
+        "title": "Hotkey",
+        "hint": "Hold and speak, or press twice",
+        "press": "Press keys…",
+        "failed": "Couldn't change the hotkey",
+        "blocked": "macOS is blocking keyboard input right now. Close the password window and try again."
+      },
+      "pill": {
+        "title": "Pill on screen",
+        "label": "When to show the pill",
+        "always": "Always",
+        "recording": "While recording"
+      },
+      "autostart": "Start with the Mac",
+      "dictionary": {
+        "title": "Dictionary",
+        "hint": "Tolkovo fixes these words after recognition",
+        "add": "Add",
+        "empty": "Empty for now. Soon you can teach Tolkovo to spell words your way."
+      },
+      "advancedLink": "Advanced",
+      "about": "Tolkovo {{version}} · free forever"
+    },
+    "advanced": {
+      "title": "Advanced",
+      "back": "Settings",
+      "model": {
+        "title": "Recognition model",
+        "hint": "The standard one understands Russian best.",
+        "standard": "Standard",
+        "notDownloaded": "{{name}} (not downloaded)",
+        "downloading": "Downloading… {{pct}}%",
+        "cleanup": "Delete others",
+        "cleanupHint": "Free up space: keep only the selected model.",
+        "failed": "Couldn't switch the model"
+      },
+      "mic": {
+        "title": "Microphone",
+        "system": "System default"
+      },
+      "paste": {
+        "title": "How to paste text",
+        "ctrl_v": "Via clipboard (⌘V)",
+        "direct": "Type letter by letter",
+        "none": "Don't paste — copy only"
+      },
+      "sounds": "Start and stop sounds",
+      "data": {
+        "title": "Data folder",
+        "open": "Open"
+      }
     }
   }
 }
