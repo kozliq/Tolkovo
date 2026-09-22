@@ -11,11 +11,80 @@
 .tk-pill-hit {
   border-radius: 32px;
   cursor: default;
+  will-change: transform, filter, opacity;
 }
 
-/* Reduce Motion: the liquid switches level instantly instead of flowing. */
+/* Hiding: the glass slumps into a round blob, blurs and dissolves. */
+.tk-pill-hit[data-anim="leave"] {
+  animation: tk-blob-out 420ms cubic-bezier(0.55, 0, 0.8, 0.3) forwards;
+}
+
+/* Showing: a blurry blob gathers, overshoots and settles into the pill. */
+.tk-pill-hit[data-anim="enter"] {
+  animation: tk-blob-in 560ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+}
+
+@keyframes tk-blob-out {
+  0% {
+    transform: scale(1, 1);
+    filter: blur(0);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(1.18, 0.7);
+    filter: blur(1.5px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.35, 0.3);
+    filter: blur(12px);
+    opacity: 0;
+  }
+}
+
+@keyframes tk-blob-in {
+  0% {
+    transform: scale(0.35, 0.3);
+    filter: blur(12px);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.12, 0.86);
+    filter: blur(2px);
+    opacity: 1;
+  }
+  78% {
+    transform: scale(0.96, 1.05);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1, 1);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+/* Reduce Motion: no shape changes — a plain, quick fade. */
 @media (prefers-reduced-motion: reduce) {
   .tk-pill-live .tk-pill-liquid {
     transition: none !important;
+  }
+  .tk-pill-hit[data-anim="leave"] {
+    animation: tk-fade-out 200ms ease forwards;
+  }
+  .tk-pill-hit[data-anim="enter"] {
+    animation: tk-fade-in 200ms ease both;
+  }
+}
+
+@keyframes tk-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes tk-fade-in {
+  from {
+    opacity: 0;
   }
 }

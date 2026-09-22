@@ -34,6 +34,11 @@
   --tk-burgundy-top: #a3263c;
   --tk-burgundy-bottom: #5b1426;
   --tk-burgundy-dot: #c23a52;
+  /* Pill liquid: a deeper, richer burgundy with a lighter crest. */
+  --tk-liquid-top: #b8304b;
+  --tk-liquid-mid: #8e2138;
+  --tk-liquid-bottom: #5b1426;
+  --tk-liquid-crest: #d4506a;
   --tk-liquid: linear-gradient(
     180deg,
     var(--tk-burgundy-top) 0%,

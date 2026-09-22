@@ -71,6 +71,23 @@ if (screen === "download") {
   } as never);
 }
 
+// Fake voice: bursts of level like speech.
+const VoicePill = ({ fill }: { fill: number }) => {
+  const [level, setLevel] = React.useState(0);
+  React.useEffect(() => {
+    const id = setInterval(
+      () => setLevel(Math.random() < 0.3 ? 0.05 : Math.random() * 0.5),
+      90,
+    );
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div style={{ transform: "scale(1.6)" }}>
+      <Pill width={64} height={140} fill={fill} level={level} />
+    </div>
+  );
+};
+
 const backdrop: React.CSSProperties = {
   width: 1000,
   height: 680,
@@ -141,8 +158,8 @@ const content =
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   screen === "pill" ? (
-    <div style={{ ...backdrop, width: 400, height: 300 }}>
-      <Pill width={64} height={140} fill={Number(arg ?? 0)} />
+    <div style={{ ...backdrop, width: 500, height: 420 }}>
+      <VoicePill fill={Number(arg ?? 0)} />
     </div>
   ) : (
     <Frame>{content}</Frame>

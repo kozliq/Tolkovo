@@ -33,6 +33,10 @@ const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
 /// How long the drain animation runs before a "when recording" pill hides.
 const DRAIN_MS: u64 = 700;
+/// Length of the "melts into a blob" leave animation in the pill webview.
+const LEAVE_MS: u64 = 420;
+/// Voice level updates sent to the pill (the wave follows your voice).
+const LEVEL_THROTTLE_MS: u64 = 40;
 
 const STORE_PATH: &str = "tolkovo.json";
 const KEY_POSITION: &str = "pill_position";
@@ -65,6 +69,9 @@ static CURRENT: Mutex<PillState> = Mutex::new(PillState::Idle);
 static GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Bumped on every window move; the position is saved once moves settle.
 static MOVE_GENERATION: AtomicU64 = AtomicU64::new(0);
+/// Bumped on every show/hide request so a delayed hide can tell it is stale.
+static VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
+static LAST_LEVEL_EMIT: AtomicU64 = AtomicU64::new(0);
 
 fn store_path() -> std::path::PathBuf {
     crate::portable::store_path(STORE_PATH)
@@ -189,6 +196,9 @@ pub fn create(app: &AppHandle) {
             .has_shadow(false)
             .transparent(true)
             .no_activate(true)
+            // NSPanel hides itself whenever the app deactivates by default —
+            // the pill blinked out on every app switch.
+            .hides_on_deactivate(false)
             .corner_radius(0.0)
             .style_mask(StyleMask::empty().borderless().nonactivating_panel())
             .with_window(|w| {
@@ -303,6 +313,7 @@ fn set_state(app: &AppHandle, state: PillState) {
 }
 
 fn show(app: &AppHandle) {
+    VISIBILITY_GENERATION.fetch_add(1, Ordering::SeqCst);
     let app2 = app.clone();
     let _ = app.run_on_main_thread(move || {
         if let Some(w) = app2.get_webview_window(PILL_LABEL) {
@@ -312,17 +323,59 @@ fn show(app: &AppHandle) {
             if !w.is_visible().unwrap_or(false) {
                 let _ = w.show();
             }
+            // Plays the "blob gathers into a pill" enter animation (or
+            // cancels a leave animation that is still running).
+            let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", true);
         }
     });
 }
 
+/// Hide with the "melts into a blob" animation, then unmap the window —
+/// unless something asked to show it again in the meantime.
 fn hide(app: &AppHandle) {
-    let app2 = app.clone();
-    let _ = app.run_on_main_thread(move || {
-        if let Some(w) = app2.get_webview_window(PILL_LABEL) {
-            let _ = w.hide();
+    let generation = VISIBILITY_GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
+    let Some(w) = app.get_webview_window(PILL_LABEL) else {
+        return;
+    };
+    if !w.is_visible().unwrap_or(false) {
+        return;
+    }
+    let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", false);
+    let app = app.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(LEAVE_MS));
+        if VISIBILITY_GENERATION.load(Ordering::SeqCst) != generation {
+            return;
         }
+        let app2 = app.clone();
+        let _ = app.run_on_main_thread(move || {
+            if let Some(w) = app2.get_webview_window(PILL_LABEL) {
+                let _ = w.hide();
+            }
+        });
     });
+}
+
+/// Hook from Handy's `overlay::emit_levels` (audio callback, ~24 Hz): the
+/// voice level makes the liquid's surface ripple while you speak.
+pub fn on_levels(app: &AppHandle, levels: &[f32]) {
+    if *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) != PillState::Recording {
+        return;
+    }
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64;
+    if now.saturating_sub(LAST_LEVEL_EMIT.load(Ordering::Relaxed)) < LEVEL_THROTTLE_MS {
+        return;
+    }
+    LAST_LEVEL_EMIT.store(now, Ordering::Relaxed);
+    let level = if levels.is_empty() {
+        0.0
+    } else {
+        levels.iter().copied().fold(0.0_f32, f32::max)
+    };
+    let _ = app.emit_to(PILL_LABEL, "tk-pill-level", level.clamp(0.0, 1.0));
 }
 
 /// Show or hide the resting pill according to the mode and first-run state.
