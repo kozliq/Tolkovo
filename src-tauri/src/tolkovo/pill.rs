@@ -23,11 +23,13 @@ use crate::tray::TrayIconState;
 
 pub const PILL_LABEL: &str = "tolkovo_pill";
 
-/// Visible capsule size (logical points), per TOLKOVO.md / States mockup.
-const PILL_WIDTH: f64 = 64.0;
-const PILL_HEIGHT: f64 = 140.0;
-/// Transparent margin around the capsule so its drop shadow isn't clipped.
-const PILL_MARGIN: f64 = 24.0;
+/// Visible capsule size (logical points). Half the 64×140 of the mockups —
+/// the author found the full size too big on screen.
+const PILL_WIDTH: f64 = 32.0;
+const PILL_HEIGHT: f64 = 70.0;
+/// Transparent margin around the capsule so its drop shadow and the blob
+/// transitions (which overshoot the capsule) aren't clipped.
+const PILL_MARGIN: f64 = 16.0;
 const WINDOW_WIDTH: f64 = PILL_WIDTH + PILL_MARGIN * 2.0;
 const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
@@ -222,7 +224,11 @@ pub fn create(app: &AppHandle) {
         {
             Ok(panel) => {
                 panel.hide();
-                app.get_webview_window(PILL_LABEL)
+                let window = app.get_webview_window(PILL_LABEL);
+                if let Some(w) = &window {
+                    prevent_activation(w);
+                }
+                window
             }
             Err(e) => {
                 log::error!("Failed to create the pill panel: {e}");
@@ -269,6 +275,36 @@ pub fn create(app: &AppHandle) {
     refresh_visibility(app);
     #[cfg(target_os = "macos")]
     watch_space_changes(app);
+}
+
+/// Clicking the pill must never activate Tolkovo: an active Tolkovo makes
+/// macOS jump to the Space holding its settings window, throwing the user out
+/// of the app they were dictating into. The panel's non-activating style
+/// mask is applied after the window already exists (tauri-nspanel converts a
+/// Tauri window), and AppKit only honours that flag when it is set at
+/// creation, so set the underlying flag directly. `_setPreventsActivation:`
+/// is private but long-standing; it is only sent if the window responds.
+#[cfg(target_os = "macos")]
+fn prevent_activation(window: &tauri::WebviewWindow) {
+    use objc2::runtime::{AnyObject, Bool, Sel};
+    use objc2::{msg_send, sel};
+
+    let Ok(ptr) = window.ns_window() else {
+        return;
+    };
+    let ns_window = ptr as *mut AnyObject;
+    if ns_window.is_null() {
+        return;
+    }
+    let selector: Sel = sel!(_setPreventsActivation:);
+    unsafe {
+        let responds: Bool = msg_send![&*ns_window, respondsToSelector: selector];
+        if responds.as_bool() {
+            let _: () = msg_send![&*ns_window, _setPreventsActivation: Bool::YES];
+        } else {
+            log::warn!("Pill window cannot opt out of app activation");
+        }
+    }
 }
 
 /// On every Space switch (swiping between desktops, entering a full-screen

@@ -54,6 +54,8 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
       last: 0,
       acc: 0,
     });
+    const scale = useRef(width / 64);
+    scale.current = width / 64;
     const settleRef = useRef(settle);
     settleRef.current = settle;
 
@@ -63,9 +65,10 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
       nudge: (dx, dy) => {
         const s = sim.current;
         // Water lags behind the glass: moving right tilts it up on the left.
-        s.tiltV += Math.max(-40, Math.min(40, -dx * 0.6));
+        const k = scale.current;
+        s.tiltV += Math.max(-40, Math.min(40, -dx * 0.6)) * k;
         // A vertical jolt bounces the whole surface.
-        const kick = Math.max(-3, Math.min(3, dy * 0.06));
+        const kick = Math.max(-3, Math.min(3, dy * 0.06)) * k;
         for (let i = 0; i < COLUMNS; i++) s.v[i] += kick;
         wake.current();
       },
@@ -92,6 +95,8 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const s = sim.current;
       const still = reducedMotion();
+      // Pixel-sized effects were tuned on the 64 px pill; scale them.
+      const k = width / 64;
 
       const physics = () => {
         // Level: a lightly under-damped spring, so it overshoots a touch.
@@ -121,13 +126,13 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
         if (s.voice > 0.02 && !still && s.voiceClock >= VOICE_EVERY) {
           s.voiceClock = 0;
           const c = Math.random() * (COLUMNS - 1);
-          const amp = (Math.random() * 0.6 + 0.4) * s.voice * 1.2;
+          const amp = (Math.random() * 0.6 + 0.4) * s.voice * 1.2 * k;
           const dir = Math.random() < 0.5 ? -1 : 1;
           for (let i = 0; i < COLUMNS; i++) {
             const d = (i - c) / 3.2;
             s.v[i] += dir * amp * Math.exp(-d * d);
           }
-          s.tiltV += dir * s.voice * 3;
+          s.tiltV += dir * s.voice * 3 * k;
         }
 
         // Spring chain.
@@ -155,7 +160,7 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
           const x = (i / (COLUMNS - 1)) * width;
           const t = x / width - 0.5;
           const edge = Math.min(x, width - x);
-          const meniscus = -2.2 * Math.exp(-edge / 2.6);
+          const meniscus = -2.2 * k * Math.exp(-edge / (2.6 * k));
           pts.push([x, base + s.h[i] + s.tilt * t + meniscus]);
         }
 
@@ -195,17 +200,17 @@ export const Liquid = forwardRef<LiquidHandle, LiquidProps>(
         ctx.fillStyle = side;
         ctx.fillRect(0, 0, width, height);
         // Light passing through just under the surface.
-        const sheen = ctx.createLinearGradient(0, top, 0, top + 14);
+        const sheen = ctx.createLinearGradient(0, top, 0, top + 14 * k);
         sheen.addColorStop(0, "rgba(255,170,190,0.28)");
         sheen.addColorStop(1, "rgba(255,170,190,0)");
         ctx.fillStyle = sheen;
-        ctx.fillRect(0, top - 2, width, 18);
+        ctx.fillRect(0, top - 2, width, 18 * k);
         ctx.restore();
 
         // The meniscus line: a thin, bright edge where water meets air.
         ctx.beginPath();
         surface();
-        ctx.lineWidth = 1;
+        ctx.lineWidth = Math.max(0.75, k);
         ctx.strokeStyle = "rgba(255,200,212,0.55)";
         ctx.stroke();
       };

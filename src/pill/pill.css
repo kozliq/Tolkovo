@@ -9,7 +9,7 @@
 }
 
 .tk-pill-hit {
-  border-radius: 32px;
+  border-radius: 16px;
   cursor: default;
   touch-action: none;
   transform-origin: 50% 70%;
@@ -90,4 +90,11 @@
   from {
     opacity: 0;
   }
+}
+
+/* The on-screen pill is half the mockup size; its shadow scales with it. */
+.tk-pill-live {
+  box-shadow:
+    0 7px 17px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }

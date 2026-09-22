@@ -155,8 +155,8 @@ const PillWindow = () => {
       >
         <Pill
           ref={water}
-          width={64}
-          height={140}
+          width={32}
+          height={70}
           fill={recording ? RECORDING_FILL : 0}
           level={recording ? level : 0}
           settle={recording ? 0.5 : 0.7}
