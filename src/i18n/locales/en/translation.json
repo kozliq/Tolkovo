@@ -747,12 +747,12 @@
     },
     "errors": {
       "micTitle": "No microphone access",
-      "micText": "Let Tolkovo hear you: System Settings → Privacy → Microphone.",
+      "micText": "Let Tolkovo hear you: System Settings → Privacy & Security → Microphone.",
       "noMicTitle": "No microphone found",
       "noMicText": "Connect a microphone and try again.",
       "recordTitle": "Couldn't record",
       "pasteTitle": "Couldn't paste the text",
-      "pasteText": "The text is on the clipboard — paste it with ⌘V.",
+      "pasteText": "Try again. If it keeps failing, pick another paste method in Advanced.",
       "recognizeTitle": "Couldn't understand the speech",
       "tryAgain": "Please try again."
     },
@@ -760,7 +760,7 @@
       "title": "Settings",
       "hotkey": {
         "title": "Hotkey",
-        "hint": "Hold and speak, or press twice",
+        "hint": "Hold and speak — or press at the start and at the end",
         "press": "Press keys…",
         "failed": "Couldn't change the hotkey",
         "blocked": "macOS is blocking keyboard input right now. Close the password window and try again."

@@ -59,15 +59,42 @@ pub fn init(app: &AppHandle) {
 pub fn focus_without_dock(app: &AppHandle) {
     #[cfg(target_os = "macos")]
     {
+        use tauri::Manager;
         let _ = app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-        let _ = app.run_on_main_thread(|| unsafe {
+        let handle = app.clone();
+        let _ = app.run_on_main_thread(move || unsafe {
             use objc2::msg_send;
             use objc2::runtime::{AnyClass, AnyObject, Bool};
+
+            // Bring the window onto the Space the user is on — including a
+            // full-screen app's Space — even if macOS declines to activate
+            // us (macOS 14+ activation is cooperative).
+            if let Some(w) = handle.get_webview_window("main") {
+                if let Ok(ptr) = w.ns_window() {
+                    let ns_window = ptr as *mut AnyObject;
+                    if !ns_window.is_null() {
+                        const MOVE_TO_ACTIVE_SPACE: usize = 1 << 1;
+                        const FULL_SCREEN_AUXILIARY: usize = 1 << 8;
+                        let current: usize = msg_send![&*ns_window, collectionBehavior];
+                        let wanted = current | MOVE_TO_ACTIVE_SPACE | FULL_SCREEN_AUXILIARY;
+                        let _: () = msg_send![&*ns_window, setCollectionBehavior: wanted];
+                        // A window still ordered in on another Space stays
+                        // there; ordering it out and back in places it on
+                        // the active Space.
+                        let none: *const AnyObject = std::ptr::null();
+                        let _: () = msg_send![&*ns_window, orderOut: none];
+                        let _: () = msg_send![&*ns_window, orderFrontRegardless];
+                    }
+                }
+            }
             if let Some(cls) = AnyClass::get(c"NSApplication") {
                 let nsapp: *mut AnyObject = msg_send![cls, sharedApplication];
                 if !nsapp.is_null() {
                     let _: () = msg_send![&*nsapp, activateIgnoringOtherApps: Bool::YES];
                 }
+            }
+            if let Some(w) = handle.get_webview_window("main") {
+                let _ = w.set_focus();
             }
         });
     }

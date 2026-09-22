@@ -3,7 +3,6 @@ import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { listen } from "@tauri-apps/api/event";
 import { commands, type ModelInfo } from "@/bindings";
-import { toast } from "sonner";
 
 interface DownloadProgress {
   model_id: string;
@@ -345,7 +344,8 @@ export const useModelStore = create<ModelsStore>()(
               state.error = error;
             }),
           );
-          toast.error(error);
+          // Tolkovo: no raw engine error here — the download screen and the
+          // Advanced page show their own human message on failure.
         },
       );
 

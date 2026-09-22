@@ -6,6 +6,6 @@
   <key>LSUIElement</key>
   <true/>
   <key>NSMicrophoneUsageDescription</key>
-  <string>Request microphone access to transcribe audio locally</string>
+  <string>Tolkovo слышит тебя, только пока ты диктуешь. Звук обрабатывается на этом Mac и никуда не отправляется.</string>
 </dict>
 </plist>
