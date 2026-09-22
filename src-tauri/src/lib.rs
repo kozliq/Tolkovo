@@ -652,6 +652,7 @@ pub fn run(cli_args: CliArgs) {
         .commands(collect_commands![
             tolkovo::tolkovo_onboarding_finished,
             tolkovo::pill::tolkovo_pill_click,
+            tolkovo::pill::tolkovo_pill_drag,
             tolkovo::pill::tolkovo_pill_state,
             tolkovo::pill::tolkovo_get_pill_mode,
             tolkovo::pill::tolkovo_set_pill_mode,

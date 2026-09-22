@@ -305,99 +305,10 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }
 
-/* Liquid column; its top edge is the water surface. Overflow stays visible
-   so the waves ride above it; the capsule clips everything. */
-.tk-pill-liquid {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-/* Wider and deeper than the capsule so the gentle tilt never shows a
-   corner. Rotates around the surface, like water in a rocking toy boat. */
-.tk-slosh {
-  position: absolute;
-  left: -30%;
-  right: -30%;
-  top: 0;
-  bottom: -40px;
-  transform-origin: 50% 0;
-  animation: tk-slosh 3.4s ease-in-out infinite alternate;
-}
-
-.tk-pill-body {
+.tk-liquid {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    var(--tk-liquid-top) 0%,
-    var(--tk-liquid-mid) 45%,
-    var(--tk-liquid-bottom) 100%
-  );
-  box-shadow: inset 0 0 22px rgba(255, 110, 140, 0.18);
-}
-
-.tk-wave {
-  position: absolute;
-  left: 0;
-  width: 200%;
-  height: var(--tk-wave-h, 12px);
-  bottom: calc(100% - 1px);
-  transform-origin: 50% 100%;
-  transition: opacity 250ms ease;
-}
-
-/* Keep the waves off the bottom edge of an empty pill. */
-.tk-pill-liquid[data-empty] .tk-wave {
-  opacity: 0;
-}
-
-.tk-wave-front {
-  animation: tk-roll 2.6s linear infinite;
-}
-
-.tk-wave-front path {
-  fill: var(--tk-liquid-top);
-  stroke: rgba(255, 190, 205, 0.35);
-  stroke-width: 0.8;
-  vector-effect: non-scaling-stroke;
-}
-
-.tk-wave-back {
-  animation: tk-roll-back 4.1s linear infinite;
-  opacity: 0.6;
-}
-
-.tk-wave-back path {
-  fill: var(--tk-liquid-crest);
-}
-
-@keyframes tk-roll {
-  from {
-    transform: translateX(0) scaleY(var(--tk-amp, 0.5));
-  }
-  to {
-    transform: translateX(-50%) scaleY(var(--tk-amp, 0.5));
-  }
-}
-
-@keyframes tk-roll-back {
-  from {
-    transform: translateX(-50%) scaleY(calc(var(--tk-amp, 0.5) * 1.2));
-  }
-  to {
-    transform: translateX(0) scaleY(calc(var(--tk-amp, 0.5) * 1.2));
-  }
-}
-
-@keyframes tk-slosh {
-  from {
-    transform: rotate(-4deg);
-  }
-  to {
-    transform: rotate(4deg);
-  }
+  display: block;
 }
 
 .tk-pill-mic {
@@ -406,13 +317,6 @@
   right: 0;
   display: flex;
   justify-content: center;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tk-slosh,
-  .tk-wave {
-    animation: none;
-  }
 }
 
 @media (prefers-reduced-transparency: reduce) {

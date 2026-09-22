@@ -1,34 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { commands } from "@/bindings";
 import { Pill } from "@/tolkovo/components/Pill";
+import type { LiquidHandle } from "@/tolkovo/components/Liquid";
 import "@/tolkovo/tolkovo.css";
 import "./pill.css";
 
 type PillState = "idle" | "recording" | "draining";
-type Anim = "enter" | "leave" | null;
+type Anim = "enter" | "leave" | "hop" | null;
 
 /** Pixels the pointer must travel before a press becomes a drag. */
-const DRAG_THRESHOLD = 4;
+const DRAG_THRESHOLD = 3;
 /**
  * Liquid level while recording. Not quite to the brim, so the water
- * surface — which ripples with the voice — stays in view.
+ * surface — which reacts to the voice — stays in view.
  */
-const RECORDING_FILL = 74;
+const RECORDING_FILL = 76;
 
 /**
  * The floating pill window. Fills with burgundy water while recording,
- * ripples with the voice, drains after. Melts into a blob when it hides and
- * gathers back when it shows. Drag to move (the backend remembers where),
- * click to start/stop recording.
+ * reacts to the voice, drains after. Melts into a blob when it hides,
+ * gathers back when it shows, and wobbles when you switch apps. Drag to move
+ * (the water sloshes behind), click to start/stop recording.
  */
 const PillWindow = () => {
   const [state, setState] = useState<PillState>("idle");
   const [level, setLevel] = useState(0);
   const [anim, setAnim] = useState<Anim>(null);
-  const press = useRef<{ x: number; y: number } | null>(null);
+  const water = useRef<LiquidHandle | null>(null);
   const smooth = useRef(0);
+  const drag = useRef<{
+    x: number;
+    y: number;
+    lastX: number;
+    lastY: number;
+    moving: boolean;
+    pending: { x: number; y: number } | null;
+    raf: number;
+  } | null>(null);
 
   useEffect(() => {
     commands
@@ -47,40 +56,79 @@ const PillWindow = () => {
         // Fast attack, slow release — reads as water reacting to a voice.
         const v = e.payload;
         smooth.current =
-          v > smooth.current ? v : smooth.current * 0.8 + v * 0.2;
+          v > smooth.current ? v : smooth.current * 0.82 + v * 0.18;
         setLevel(smooth.current);
       }),
       listen<boolean>("tk-pill-visible", (e) =>
         setAnim(e.payload ? "enter" : "leave"),
       ),
+      listen("tk-pill-hop", () => {
+        setAnim((a) => (a === "leave" ? a : "hop"));
+        water.current?.nudge((Math.random() - 0.5) * 30, 12);
+      }),
     ];
     return () => {
       subs.forEach((p) => p.then((fn) => fn()));
     };
   }, []);
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const onPointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
-    press.current = { x: e.screenX, y: e.screenY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      x: e.screenX,
+      y: e.screenY,
+      lastX: e.screenX,
+      lastY: e.screenY,
+      moving: false,
+      pending: null,
+      raf: 0,
+    };
   };
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    const start = press.current;
-    if (!start) return;
-    if (
-      Math.abs(e.screenX - start.x) > DRAG_THRESHOLD ||
-      Math.abs(e.screenY - start.y) > DRAG_THRESHOLD
-    ) {
-      press.current = null;
-      getCurrentWindow()
-        .startDragging()
-        .catch(() => {});
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d) return;
+    if (!d.moving) {
+      if (
+        Math.abs(e.screenX - d.x) <= DRAG_THRESHOLD &&
+        Math.abs(e.screenY - d.y) <= DRAG_THRESHOLD
+      )
+        return;
+      d.moving = true;
+      commands.tolkovoPillDrag("start", d.x, d.y).catch(() => {});
+    }
+    // The water lags behind the glass.
+    water.current?.nudge(e.screenX - d.lastX, e.screenY - d.lastY);
+    d.lastX = e.screenX;
+    d.lastY = e.screenY;
+    // One window move per frame is plenty.
+    d.pending = { x: e.screenX, y: e.screenY };
+    if (!d.raf) {
+      d.raf = requestAnimationFrame(() => {
+        d.raf = 0;
+        if (d.pending) {
+          commands
+            .tolkovoPillDrag("move", d.pending.x, d.pending.y)
+            .catch(() => {});
+          d.pending = null;
+        }
+      });
     }
   };
 
-  const onMouseUp = () => {
-    if (!press.current) return;
-    press.current = null;
+  const onPointerUp = (e: React.PointerEvent) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d) return;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    if (d.moving) {
+      if (d.pending)
+        commands
+          .tolkovoPillDrag("move", d.pending.x, d.pending.y)
+          .catch(() => {});
+      return;
+    }
     commands.tolkovoPillClick().catch(() => {});
   };
 
@@ -91,18 +139,19 @@ const PillWindow = () => {
       <div
         className="tk-pill-hit"
         data-anim={anim ?? undefined}
-        onAnimationEnd={() => anim === "enter" && setAnim(null)}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={() => (press.current = null)}
+        onAnimationEnd={() => anim !== "leave" && setAnim(null)}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => (drag.current = null)}
       >
         <Pill
+          ref={water}
           width={64}
           height={140}
           fill={recording ? RECORDING_FILL : 0}
           level={recording ? level : 0}
-          transitionMs={recording ? 500 : 650}
+          settle={recording ? 0.5 : 0.7}
           className="tk-pill-live"
         />
       </div>

@@ -34,7 +34,7 @@ const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 /// How long the drain animation runs before a "when recording" pill hides.
 const DRAIN_MS: u64 = 700;
 /// Length of the "melts into a blob" leave animation in the pill webview.
-const LEAVE_MS: u64 = 420;
+const LEAVE_MS: u64 = 560;
 /// Voice level updates sent to the pill (the wave follows your voice).
 const LEVEL_THROTTLE_MS: u64 = 40;
 
@@ -72,6 +72,8 @@ static MOVE_GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Bumped on every show/hide request so a delayed hide can tell it is stale.
 static VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
 static LAST_LEVEL_EMIT: AtomicU64 = AtomicU64::new(0);
+/// Where a drag started: cursor and window origin (logical points).
+static DRAG_ORIGIN: Mutex<Option<(f64, f64, f64, f64)>> = Mutex::new(None);
 
 fn store_path() -> std::path::PathBuf {
     crate::portable::store_path(STORE_PATH)
@@ -263,6 +265,38 @@ pub fn create(app: &AppHandle) {
     }
 
     refresh_visibility(app);
+    #[cfg(target_os = "macos")]
+    watch_frontmost_app(app);
+}
+
+/// When the user switches to another app (including a full-screen one on its
+/// own Space) the pill stays where it is and does a small jelly "hop", so the
+/// change reads as the same pill following you rather than a new window.
+#[cfg(target_os = "macos")]
+fn watch_frontmost_app(app: &AppHandle) {
+    use std::sync::atomic::AtomicI32;
+    static LAST_PID: AtomicI32 = AtomicI32::new(0);
+    let app = app.clone();
+    std::thread::spawn(move || loop {
+        std::thread::sleep(Duration::from_millis(250));
+        let handle = app.clone();
+        let _ = app.run_on_main_thread(move || {
+            use objc2_app_kit::NSWorkspace;
+            let pid = NSWorkspace::sharedWorkspace()
+                .frontmostApplication()
+                .map(|a| a.processIdentifier())
+                .unwrap_or(0);
+            let previous = LAST_PID.swap(pid, Ordering::Relaxed);
+            if previous == 0 || previous == pid || pid == std::process::id() as i32 {
+                return;
+            }
+            if let Some(w) = handle.get_webview_window(PILL_LABEL) {
+                if w.is_visible().unwrap_or(false) {
+                    let _ = w.emit_to(PILL_LABEL, "tk-pill-hop", ());
+                }
+            }
+        });
+    });
 }
 
 /// Save the pill position once dragging settles (Moved fires continuously).
@@ -422,6 +456,37 @@ pub fn tolkovo_pill_state() -> String {
         .ok()
         .and_then(|v| v.as_str().map(str::to_string))
         .unwrap_or_else(|| "idle".to_string())
+}
+
+/// Drag the pill by hand instead of handing the window to the system drag
+/// (`startDragging`): a system drag activates the app and made macOS jump to
+/// the Space the window "belongs" to. Moving the frame ourselves never
+/// activates anything, so the user stays in their app.
+/// `phase` is "start" or "move"; coordinates are screen points.
+#[tauri::command]
+#[specta::specta]
+pub fn tolkovo_pill_drag(app: AppHandle, phase: String, screen_x: f64, screen_y: f64) {
+    let Some(w) = app.get_webview_window(PILL_LABEL) else {
+        return;
+    };
+    let mut origin = DRAG_ORIGIN.lock().unwrap_or_else(|e| e.into_inner());
+    if phase == "start" {
+        if let (Ok(pos), Ok(scale)) = (w.outer_position(), w.scale_factor()) {
+            *origin = Some((
+                screen_x,
+                screen_y,
+                pos.x as f64 / scale,
+                pos.y as f64 / scale,
+            ));
+        }
+        return;
+    }
+    if let Some((cx, cy, wx, wy)) = *origin {
+        let _ = w.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+            x: wx + (screen_x - cx),
+            y: wy + (screen_y - cy),
+        }));
+    }
 }
 
 #[tauri::command]
