@@ -776,7 +776,12 @@
         "title": "Dictionary",
         "hint": "Tolkovo fixes these words after recognition",
         "add": "Add",
-        "empty": "Empty for now. Soon you can teach Tolkovo to spell words your way."
+        "empty": "Empty for now. Add a word Tolkovo spells wrong — e.g. «телега» → «Telegram».",
+        "from": "Heard",
+        "to": "Write",
+        "save": "Save",
+        "delete": "Delete replacement",
+        "starter": "Tolkovo also fixes {{count}} common words on its own: GitHub, ChatGPT, Zoom and more."
       },
       "advancedLink": "Advanced",
       "about": "Tolkovo {{version}} · free forever"

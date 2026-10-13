@@ -27,6 +27,12 @@ mockIPC((cmd) => {
       selected_microphone: "Default",
     };
   if (cmd === "tolkovo_get_pill_mode") return "always";
+  if (cmd === "tolkovo_dictionary_get")
+    return [
+      { from: "телега", to: "Telegram" },
+      { from: "пул реквест", to: "pull request" },
+    ];
+  if (cmd === "tolkovo_dictionary_starter_count") return 191;
   if (cmd === "plugin:app|version") return "0.1.0";
   if (cmd === "get_available_models") return [];
   return null;

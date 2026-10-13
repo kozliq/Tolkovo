@@ -574,3 +574,77 @@
     transition: none;
   }
 }
+
+/* Dictionary list (было → стало) */
+.tk-dict {
+  max-height: 168px;
+  overflow-y: auto;
+}
+
+.tk-dict-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+}
+
+.tk-dict-row + .tk-dict-row {
+  border-top: 1px solid var(--tk-divider);
+}
+
+.tk-dict-from {
+  width: 170px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--tk-text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tk-dict-to {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tk-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tk-dict-del {
+  border: none;
+  background: none;
+  color: var(--tk-text-2);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.tk-dict-del:hover {
+  color: #ffffff;
+}
+
+.tk-input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--tk-control-border);
+  background: var(--tk-control);
+  color: #ffffff;
+  font-family: var(--tk-font);
+  font-size: 14px;
+  outline: none;
+}
+
+.tk-input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.tk-dict-note {
+  margin-top: -8px;
+}

@@ -5,6 +5,7 @@ import { commands, type PillMode } from "@/bindings";
 import { useSettings } from "@/hooks/useSettings";
 import { Row, Segmented, Switch } from "../components/Controls";
 import { HotkeyButton } from "../components/HotkeyButton";
+import { Dictionary } from "./Dictionary";
 
 interface SettingsProps {
   onAdvanced?: () => void;
@@ -69,22 +70,7 @@ export const Settings = ({ onAdvanced }: SettingsProps) => {
         </Row>
       </div>
 
-      <div className="tk-section-head">
-        <div className="tk-row-text">
-          <div className="tk-section-title">
-            {t("tolkovo.settings.dictionary.title")}
-          </div>
-          <div className="tk-row-hint">
-            {t("tolkovo.settings.dictionary.hint")}
-          </div>
-        </div>
-        <button type="button" className="tk-btn-2" disabled>
-          {t("tolkovo.settings.dictionary.add")}
-        </button>
-      </div>
-      <div className="tk-group tk-empty">
-        {t("tolkovo.settings.dictionary.empty")}
-      </div>
+      <Dictionary />
 
       <div className="tk-page-footer">
         <button type="button" className="tk-link" onClick={onAdvanced}>

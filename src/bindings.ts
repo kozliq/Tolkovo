@@ -12,6 +12,29 @@ async tolkovoOnboardingFinished() : Promise<void> {
     await TAURI_INVOKE("tolkovo_onboarding_finished");
 },
 /**
+ * The user's own replacements, in the order they were added.
+ */
+async tolkovoDictionaryGet() : Promise<Rule[]> {
+    return await TAURI_INVOKE("tolkovo_dictionary_get");
+},
+/**
+ * Save the user's replacements (the whole list) and rebuild the matcher.
+ */
+async tolkovoDictionarySet(rules: Rule[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tolkovo_dictionary_set", { rules }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * How many words Tolkovo already knows out of the box.
+ */
+async tolkovoDictionaryStarterCount() : Promise<number> {
+    return await TAURI_INVOKE("tolkovo_dictionary_starter_count");
+},
+/**
  * Click on the pill: start or stop recording, like the hotkey.
  */
 async tolkovoPillClick() : Promise<void> {
@@ -1132,6 +1155,10 @@ export type PillMode =
 "while_recording"
 export type PostProcessProvider = { id: string; label: string; base_url: string; allow_base_url_edit?: boolean; models_endpoint?: string | null; supports_structured_output?: boolean }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
+/**
+ * One replacement: what the model writes → what it should be.
+ */
+export type Rule = { from: string; to: string }
 export type SecretMap = Partial<{ [key in string]: string }>
 export type SecureInputStatus = { 
 /**
