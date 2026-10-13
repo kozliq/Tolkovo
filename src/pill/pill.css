@@ -160,6 +160,8 @@
   background: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  border-color: transparent;
+  /* No border: the fill must reach the glass edge, or a 1px light ring of
+     the native glass shows around the burgundy. */
+  border: 0;
   box-shadow: none;
 }

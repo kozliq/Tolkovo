@@ -33,10 +33,6 @@ const PILL_MARGIN: f64 = 16.0;
 const WINDOW_WIDTH: f64 = PILL_WIDTH + PILL_MARGIN * 2.0;
 const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
-/// How long the burgundy takes to drain (the CSS transition, with a margin).
-/// The drain starts when transcription starts, so after the text is pasted
-/// the pill only waits for whatever is left of it.
-const DRAIN_MS: u64 = 450;
 /// Length of the "old TV switching off" leave animation (see play_tv).
 const LEAVE_MS: u64 = 330;
 
@@ -73,8 +69,6 @@ static GENERATION: AtomicU64 = AtomicU64::new(0);
 static MOVE_GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Bumped on every show/hide request so a delayed hide can tell it is stale.
 static VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
-/// When the current drain began (Draining state), to time the hide.
-static DRAIN_STARTED: Mutex<Option<std::time::Instant>> = Mutex::new(None);
 /// Where a drag started: cursor and window origin (logical points).
 static DRAG_ORIGIN: Mutex<Option<(f64, f64, f64, f64)>> = Mutex::new(None);
 
@@ -597,14 +591,18 @@ fn set_state(app: &AppHandle, state: PillState) {
             return;
         }
         *current = state;
-        let mut drain = DRAIN_STARTED.lock().unwrap_or_else(|e| e.into_inner());
-        match state {
-            PillState::Draining => *drain = Some(std::time::Instant::now()),
-            PillState::Recording => *drain = None,
-            PillState::Idle => {}
-        }
         let generation = GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
-        let _ = app.emit_to(PILL_LABEL, "tk-pill-state", state);
+        // A pill that disappears after recording ("При записи") stays full
+        // of burgundy until it switches off: no drain to empty glass first.
+        // It is told it is idle only once it is off screen (see hide()).
+        let shown = match state {
+            PillState::Draining if hides_when_idle(app) => Some(PillState::Recording),
+            PillState::Idle if hides_when_idle(app) => None,
+            other => Some(other),
+        };
+        if let Some(shown) = shown {
+            let _ = app.emit_to(PILL_LABEL, "tk-pill-state", shown);
+        }
         generation
     };
 
@@ -612,28 +610,13 @@ fn set_state(app: &AppHandle, state: PillState) {
         PillState::Recording | PillState::Draining => show(app),
         PillState::Idle if !hides_when_idle(app) => show(app),
         PillState::Idle => {
-            // The burgundy drained while the text was being recognized; wait
-            // only for what is left of it (all of it after a cancel), then
-            // switch off — unless anything changed in the meantime.
-            let drained = DRAIN_STARTED
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .take()
-                .map(|t| t.elapsed())
-                .unwrap_or_default();
-            let wait = Duration::from_millis(DRAIN_MS).saturating_sub(drained);
-            let app = app.clone();
-            std::thread::spawn(move || {
-                std::thread::sleep(wait);
-                let still_idle =
-                    *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) == PillState::Idle;
-                if GENERATION.load(Ordering::SeqCst) == generation
-                    && still_idle
-                    && hides_when_idle(&app)
-                {
-                    hide(&app);
-                }
-            });
+            // Still full of burgundy (see above): switch off right away,
+            // straight from red — unless anything changed in the meantime.
+            let still_idle = *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) == PillState::Idle;
+            if GENERATION.load(Ordering::SeqCst) == generation && still_idle && hides_when_idle(app)
+            {
+                hide(app);
+            }
         }
     }
 }
@@ -664,7 +647,7 @@ fn show(app: &AppHandle) {
     });
 }
 
-/// Hide with the "melts into a blob" animation, then unmap the window —
+/// Switch off like an old TV, then unmap the window —
 /// unless something asked to show it again in the meantime.
 fn hide(app: &AppHandle) {
     let generation = VISIBILITY_GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
@@ -693,6 +676,10 @@ fn hide(app: &AppHandle) {
         let _ = app.run_on_main_thread(move || {
             if let Some(w) = app2.get_webview_window(PILL_LABEL) {
                 let _ = w.hide();
+                // Now that it is off screen, empty the capsule for next time.
+                if *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) == PillState::Idle {
+                    let _ = w.emit_to(PILL_LABEL, "tk-pill-state", PillState::Idle);
+                }
             }
         });
     });

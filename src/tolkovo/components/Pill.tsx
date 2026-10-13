@@ -37,6 +37,7 @@ export const Pill = ({
       <div
         className="tk-pill-fill"
         data-empty={level < 0.5 ? "" : undefined}
+        data-full={level > 99.5 ? "" : undefined}
         style={{
           height: `${level}%`,
           transitionDuration: `${transitionMs}ms`,
