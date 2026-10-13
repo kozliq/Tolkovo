@@ -14,6 +14,9 @@ concurrency:
 
 jobs:
   build:
+    # Tolkovo: Handy's cross-platform build needs Handy's signing secrets;
+    # forks release through tolkovo-release.yml instead.
+    if: github.repository == 'cjpais/Handy'
     permissions:
       contents: write
     strategy:

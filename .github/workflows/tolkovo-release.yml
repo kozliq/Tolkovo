@@ -1,0 +1,92 @@
+# Tolkovo release: push a tag like v0.1.0 and GitHub builds the DMG for Apple
+# Silicon, publishes its SHA-256 next to it, attests where the build came
+# from, and opens a draft release with Russian install notes. The draft is
+# published by hand after a check.
+#
+# Handy's own release.yml/build.yml stay for upstream merges; they rely on
+# Handy's signing secrets and are not used for Tolkovo.
+name: Tolkovo release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write # create the draft release
+  id-token: write # build provenance attestation
+  attestations: write
+
+jobs:
+  macos:
+    runs-on: macos-15 # Apple Silicon
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build app and DMG
+        run: bun run tauri build --bundles app,dmg
+
+      - name: Collect DMG and checksum
+        id: dmg
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          SRC=$(ls src-tauri/target/release/bundle/dmg/*.dmg | head -1)
+          OUT="Tolkovo-${VERSION}-apple-silicon.dmg"
+          mkdir -p dist-release
+          cp "$SRC" "dist-release/$OUT"
+          (cd dist-release && shasum -a 256 "$OUT" > "$OUT.sha256")
+          echo "file=dist-release/$OUT" >> "$GITHUB_OUTPUT"
+          echo "sha=$(cut -d' ' -f1 dist-release/$OUT.sha256)" >> "$GITHUB_OUTPUT"
+          echo "name=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ steps.dmg.outputs.file }}
+
+      - name: Draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: Tolkovo ${{ github.ref_name }}
+          files: |
+            ${{ steps.dmg.outputs.file }}
+            ${{ steps.dmg.outputs.file }}.sha256
+          body: |
+            Голосовой ввод для macOS. Бесплатно, без интернета, по-русски.
+
+            ## Установка
+
+            1. Скачай **${{ steps.dmg.outputs.name }}** ниже.
+            2. Открой его и перетащи Tolkovo в «Программы».
+            3. Программа пока не заверена Apple, поэтому macOS её не пустит с первого раза.
+               Один раз выполни в Терминале:
+               ```
+               xattr -dr com.apple.quarantine /Applications/Tolkovo.app
+               ```
+            4. Запусти Tolkovo, разреши микрофон и вставку текста — модель скачается сама.
+
+            Нужен Mac на Apple Silicon (M1 и новее) и macOS 14 или новее.
+
+            ## Проверка подлинности
+
+            SHA-256: `${{ steps.dmg.outputs.sha }}`
+
+            ```
+            shasum -a 256 ~/Downloads/${{ steps.dmg.outputs.name }}
+            gh attestation verify ~/Downloads/${{ steps.dmg.outputs.name }} -R ${{ github.repository }}
+            ```

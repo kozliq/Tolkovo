@@ -39,9 +39,24 @@
     "macOS": {
       "files": {},
       "hardenedRuntime": true,
-      "minimumSystemVersion": "10.15",
+      "minimumSystemVersion": "14.0",
       "signingIdentity": "-",
-      "entitlements": "Entitlements.plist"
+      "entitlements": "Entitlements.plist",
+      "dmg": {
+        "background": "dmg/background.tiff",
+        "windowSize": {
+          "width": 920,
+          "height": 400
+        },
+        "appPosition": {
+          "x": 312,
+          "y": 202
+        },
+        "applicationFolderPosition": {
+          "x": 608,
+          "y": 202
+        }
+      }
     },
     "linux": {
       "deb": {
