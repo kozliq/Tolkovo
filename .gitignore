@@ -45,3 +45,13 @@ result
 
 # Python bytecode (scripts/)
 __pycache__/
+
+# Secrets and signing material never go into the repo
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.keychain-db
+*.mobileprovision
