@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <!-- Tolkovo app icon source. Render to PNG (1024) and run `bun tauri icon`.
+  <!-- Tolkovo app icon source. Render to PNG (1024) with a transparent
+       background (QuickLook/qlmanage paints SVG over white — cut the body
+       out onto transparency afterwards), then run `bun tauri icon`.
        The pill on Liquid Glass filled with burgundy glass from the bottom —
        the same look as the on-screen pill while recording. -->
   <defs>
