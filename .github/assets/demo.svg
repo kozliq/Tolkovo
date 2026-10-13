@@ -13,9 +13,9 @@
   <rect x="94" y="360" width="250" height="40" rx="18" fill="#26262c"/>
   <text x="112" y="386" font-size="16" fill="#fff">Ну что, глянешь сегодня?</text>
   <g style="animation:out 9.0s linear infinite">
-    <rect x="420" y="416" width="326" height="64" rx="18" fill="#8e2138"/>
-    <text x="438" y="443" font-size="16" fill="#fff">Да, скинь ссылку на GitHub — вечером</text>
-    <text x="438" y="466" font-size="16" fill="#fff">гляну pull request.</text>
+    <rect x="436" y="416" width="310" height="64" rx="18" fill="#8e2138"/>
+    <text x="456" y="443" font-size="16" fill="#fff">Да, скинь ссылку на GitHub —</text>
+    <text x="456" y="466" font-size="16" fill="#fff">вечером гляну pull request.</text>
   </g>
   <rect x="90" y="504" width="660" height="52" rx="26" fill="#26262c"/>
   <text x="114" y="536" font-size="16" fill="rgba(255,255,255,.35)" style="animation:ph 9.0s linear infinite">Сообщение</text>
