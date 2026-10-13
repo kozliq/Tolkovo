@@ -43,6 +43,13 @@ pub fn build(app: &AppHandle, busy: bool) -> tauri::Result<(Menu<tauri::Wry>, St
     Ok((menu, "Tolkovo".to_string()))
 }
 
+/// Menu-bar icon colouring. Waiting is an empty capsule that macOS tints
+/// for the menu bar (a template); writing is the burgundy capsule, which must
+/// keep its colour — "empty pill waits, red pill writes".
+pub fn icon_is_template(icon_path: &str) -> bool {
+    !(icon_path.contains("recording") || icon_path.contains("transcribing"))
+}
+
 /// "Поддержать проект": open DONATE.md in the browser.
 pub fn open_donate(app: &AppHandle) {
     if let Err(e) = app.opener().open_url(DONATE_URL, None::<&str>) {
