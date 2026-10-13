@@ -161,6 +161,9 @@ objc2-app-kit = "0.3"
 objc2-service-management = "0.3.2"
 # Tolkovo: block observer for the Space-change notification (pill "reborn").
 block2 = "0.6"
+# Tolkovo: the pill's "old TV" on/off animation (Core Animation keyframes).
+objc2-quartz-core = { version = "0.3", features = ["objc2-core-foundation"] }
+objc2-core-foundation = "0.3"
 # Tolkovo: native Liquid Glass window background (NSGlassEffectView / vibrancy).
 tauri-plugin-liquid-glass = "0.1.6"
 

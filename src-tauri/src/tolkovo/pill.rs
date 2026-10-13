@@ -9,7 +9,7 @@
 //! The engine drives it through one hook in Handy's `tray.rs`
 //! (`on_engine_state`); Handy's own recording overlay is disabled.
 
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Mutex;
 use std::time::Duration;
 
@@ -35,8 +35,8 @@ const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
 /// How long the drain animation runs before a "when recording" pill hides.
 const DRAIN_MS: u64 = 700;
-/// Length of the "melts into a blob" leave animation in the pill webview.
-const LEAVE_MS: u64 = 600;
+/// Length of the "old TV switching off" leave animation (see play_tv).
+const LEAVE_MS: u64 = 380;
 /// Voice level updates sent to the pill (the wave follows your voice).
 const LEVEL_THROTTLE_MS: u64 = 40;
 
@@ -227,6 +227,7 @@ pub fn create(app: &AppHandle) {
                 let window = app.get_webview_window(PILL_LABEL);
                 if let Some(w) = &window {
                     prevent_activation(w);
+                    attach_native_glass(w);
                 }
                 window
             }
@@ -276,6 +277,199 @@ pub fn create(app: &AppHandle) {
     #[cfg(target_os = "macos")]
     watch_space_changes(app);
 }
+
+/// Key for the on/off animation on the pill's root layer.
+const TV_KEY: &str = "tolkovo-tv";
+
+/// The pill switches on and off like an old CRT TV: off collapses the whole
+/// picture — the glass and the gel together — into a bright horizontal line,
+/// then a dot, then nothing; on plays it backwards. Done with Core Animation
+/// on the window's root layer, because the Liquid Glass view is native and
+/// does not follow CSS transforms (the webview only adds the bright flash).
+#[cfg(target_os = "macos")]
+fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
+    use objc2::msg_send;
+    use objc2::rc::Retained;
+    use objc2::runtime::{AnyObject, Bool};
+    use objc2_foundation::{NSArray, NSNumber, NSString, NSValue};
+    use objc2_quartz_core::{
+        kCAFillModeBoth, kCAFillModeForwards, CAKeyframeAnimation, CALayer, CAMediaTiming,
+        CATransform3D, NSValueCATransform3DAdditions,
+    };
+
+    let Ok(ptr) = window.ns_window() else {
+        return;
+    };
+    let ns_window = ptr as *mut AnyObject;
+    if ns_window.is_null() {
+        return;
+    }
+    unsafe {
+        let content: *mut AnyObject = msg_send![&*ns_window, contentView];
+        if content.is_null() {
+            return;
+        }
+        let _: () = msg_send![&*content, setWantsLayer: Bool::YES];
+        let layer: *mut CALayer = msg_send![&*content, layer];
+        let Some(layer) = layer.as_ref() else {
+            return;
+        };
+
+        // Scale around the middle of the window whatever the anchor point is.
+        let bounds = layer.bounds();
+        let anchor = layer.anchorPoint();
+        let dx = bounds.size.width * (0.5 - anchor.x);
+        let dy = bounds.size.height * (0.5 - anchor.y);
+        let around_center = |sx: f64, sy: f64| -> Retained<NSValue> {
+            let t = CATransform3D::new_translation(-dx, -dy, 0.0)
+                .concat(CATransform3D::new_scale(sx, sy, 1.0))
+                .concat(CATransform3D::new_translation(dx, dy, 0.0));
+            NSValue::valueWithCATransform3D(t)
+        };
+
+        // Off: full → thin bright line → dot → gone. On: the reverse.
+        let mut frames = vec![
+            (0.0, around_center(1.0, 1.0)),
+            (0.5, around_center(1.08, 0.025)),
+            (0.82, around_center(0.03, 0.025)),
+            (1.0, around_center(0.001, 0.001)),
+        ];
+        if !closing {
+            frames.reverse();
+            frames = frames
+                .into_iter()
+                .map(|(t, v)| (1.0 - t, v))
+                .collect::<Vec<_>>();
+        }
+        let values: Vec<Retained<AnyObject>> = frames
+            .iter()
+            .map(|(_, v)| Retained::into_super(Retained::into_super(v.clone())))
+            .collect();
+        let times: Vec<Retained<NSNumber>> =
+            frames.iter().map(|(t, _)| NSNumber::new_f64(*t)).collect();
+
+        let anim =
+            CAKeyframeAnimation::animationWithKeyPath(Some(&NSString::from_str("transform")));
+        anim.setValues(Some(&NSArray::from_retained_slice(&values)));
+        anim.setKeyTimes(Some(&NSArray::from_retained_slice(&times)));
+        anim.setDuration(if closing { 0.34 } else { 0.4 });
+        if closing {
+            // Stay collapsed until the window is hidden.
+            anim.setFillMode(kCAFillModeForwards);
+            anim.setRemovedOnCompletion(false);
+        } else {
+            anim.setFillMode(kCAFillModeBoth);
+            anim.setRemovedOnCompletion(true);
+        }
+        layer.addAnimation_forKey(&anim, Some(&NSString::from_str(TV_KEY)));
+    }
+}
+
+/// Drop a leftover "switch off" animation (e.g. the pill was asked to show
+/// again while it was collapsing).
+#[cfg(target_os = "macos")]
+fn play_tv_cancel(window: &tauri::WebviewWindow) {
+    use objc2::msg_send;
+    use objc2::runtime::AnyObject;
+    use objc2_foundation::NSString;
+    use objc2_quartz_core::CALayer;
+
+    let Ok(ptr) = window.ns_window() else {
+        return;
+    };
+    let ns_window = ptr as *mut AnyObject;
+    if ns_window.is_null() {
+        return;
+    }
+    unsafe {
+        let content: *mut AnyObject = msg_send![&*ns_window, contentView];
+        if content.is_null() {
+            return;
+        }
+        let layer: *mut CALayer = msg_send![&*content, layer];
+        if let Some(layer) = layer.as_ref() {
+            layer.removeAnimationForKey(&NSString::from_str(TV_KEY));
+        }
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn play_tv(_window: &tauri::WebviewWindow, _closing: bool) {}
+
+#[cfg(not(target_os = "macos"))]
+fn play_tv_cancel(_window: &tauri::WebviewWindow) {}
+
+/// Whether the pill sits on Apple's own Liquid Glass (macOS 26+). The pill
+/// webview then drops its CSS imitation of glass and draws only the water.
+static NATIVE_GLASS: AtomicBool = AtomicBool::new(false);
+
+/// Put a real `NSGlassEffectView` (macOS 26+) behind the pill's webview,
+/// exactly the size and shape of the capsule, so the pill gets the system's
+/// refraction and rim light instead of a CSS blur. Older macOS keeps the CSS
+/// glass. The class is looked up at runtime, so this is a no-op there.
+#[cfg(target_os = "macos")]
+fn attach_native_glass(window: &tauri::WebviewWindow) {
+    use objc2::msg_send;
+    use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
+    use objc2::sel;
+    use objc2_foundation::{NSPoint, NSRect, NSSize};
+
+    let Some(glass_class) = AnyClass::get(c"NSGlassEffectView") else {
+        return;
+    };
+    let Ok(ptr) = window.ns_window() else {
+        return;
+    };
+    let ns_window = ptr as *mut AnyObject;
+    if ns_window.is_null() {
+        return;
+    }
+    unsafe {
+        let content: *mut AnyObject = msg_send![&*ns_window, contentView];
+        if content.is_null() {
+            return;
+        }
+        // The capsule inside the transparent margin (AppKit y goes up; the
+        // margins are symmetric so the origin is the same either way).
+        let frame = NSRect::new(
+            NSPoint::new(PILL_MARGIN, PILL_MARGIN),
+            NSSize::new(PILL_WIDTH, PILL_HEIGHT),
+        );
+        let glass: *mut AnyObject = msg_send![glass_class, alloc];
+        let glass: *mut AnyObject = msg_send![glass, initWithFrame: frame];
+        if glass.is_null() {
+            return;
+        }
+        let radius = PILL_WIDTH / 2.0;
+        let set_radius: Sel = sel!(setCornerRadius:);
+        let responds: Bool = msg_send![&*glass, respondsToSelector: set_radius];
+        if responds.as_bool() {
+            let _: () = msg_send![&*glass, setCornerRadius: radius];
+        } else {
+            let _: () = msg_send![&*glass, setWantsLayer: Bool::YES];
+            let layer: *mut AnyObject = msg_send![&*glass, layer];
+            if !layer.is_null() {
+                let _: () = msg_send![&*layer, setCornerRadius: radius];
+                let _: () = msg_send![&*layer, setMasksToBounds: Bool::YES];
+            }
+        }
+        // The pill at rest is "clear glass" (TOLKOVO.md): use the see-through
+        // style (NSGlassEffectView.Style.clear = 1) rather than the tinted
+        // regular one.
+        let set_style: Sel = sel!(setStyle:);
+        let has_style: Bool = msg_send![&*glass, respondsToSelector: set_style];
+        if has_style.as_bool() {
+            let _: () = msg_send![&*glass, setStyle: 1_isize];
+        }
+        // NSWindowBelow = -1: under the webview, so the water draws on top.
+        let none: *const AnyObject = std::ptr::null();
+        let _: () = msg_send![&*content, addSubview: glass, positioned: -1_isize, relativeTo: none];
+    }
+    NATIVE_GLASS.store(true, Ordering::SeqCst);
+}
+
+#[cfg(not(target_os = "macos"))]
+fn attach_native_glass(_window: &tauri::WebviewWindow) {}
 
 /// Clicking the pill must never activate Tolkovo: an active Tolkovo makes
 /// macOS jump to the Space holding its settings window, throwing the user out
@@ -352,6 +546,7 @@ fn reborn(app: &AppHandle) {
             if let Some(w) = handle.get_webview_window(PILL_LABEL) {
                 let _ = w.hide();
                 let _ = w.show();
+                play_tv(&w, false);
             }
         });
         std::thread::sleep(Duration::from_millis(40));
@@ -412,14 +607,17 @@ fn show(app: &AppHandle) {
     let _ = app.run_on_main_thread(move || {
         if let Some(w) = app2.get_webview_window(PILL_LABEL) {
             // Re-showing a visible panel makes it blink, and WebKit skips a
-            // running CSS transition when its window blinks — the drain
-            // animation would jump straight to empty.
+            // running CSS transition when its window blinks; only an actual
+            // reveal shows the window and plays the "TV switching on".
             if !w.is_visible().unwrap_or(false) {
                 let _ = w.show();
+                play_tv(&w, false);
+                let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", true);
+            } else {
+                // Cancel a leave animation that may still be running.
+                play_tv_cancel(&w);
+                let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", true);
             }
-            // Plays the "blob gathers into a pill" enter animation (or
-            // cancels a leave animation that is still running).
-            let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", true);
         }
     });
 }
@@ -435,6 +633,8 @@ fn hide(app: &AppHandle) {
         return;
     }
     let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", false);
+    let tv = w.clone();
+    let _ = app.run_on_main_thread(move || play_tv(&tv, true));
     let app = app.clone();
     std::thread::spawn(move || {
         std::thread::sleep(Duration::from_millis(LEAVE_MS));
@@ -547,6 +747,14 @@ pub fn tolkovo_pill_drag(app: AppHandle, phase: String, screen_x: f64, screen_y:
             y: wy + (screen_y - cy),
         }));
     }
+}
+
+/// Whether the pill is on Apple's Liquid Glass (the webview then hides its
+/// own CSS glass).
+#[tauri::command]
+#[specta::specta]
+pub fn tolkovo_pill_native_glass() -> bool {
+    NATIVE_GLASS.load(Ordering::SeqCst)
 }
 
 #[tauri::command]

@@ -28,6 +28,13 @@ async tolkovoPillDrag(phase: string, screenX: number, screenY: number) : Promise
     await TAURI_INVOKE("tolkovo_pill_drag", { phase, screenX, screenY });
 },
 /**
+ * Whether the pill is on Apple's Liquid Glass (the webview then hides its
+ * own CSS glass).
+ */
+async tolkovoPillNativeGlass() : Promise<boolean> {
+    return await TAURI_INVOKE("tolkovo_pill_native_glass");
+},
+/**
  * Current pill state, for a pill webview that (re)loads mid-recording.
  */
 async tolkovoPillState() : Promise<string> {

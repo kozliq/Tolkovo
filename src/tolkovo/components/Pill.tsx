@@ -1,13 +1,13 @@
 import { forwardRef, type CSSProperties } from "react";
 import { MicIcon } from "./icons";
-import { Liquid, type LiquidHandle } from "./Liquid";
+import { Gel, type GelHandle } from "./Gel";
 
 interface PillProps {
   width: number;
   height: number;
-  /** Liquid level, 0–100. */
+  /** How much of the capsule the gel fills, 0–100. */
   fill: number;
-  /** Seconds the liquid takes to settle at a new level. */
+  /** Seconds the gel takes to settle at a new size. */
   settle?: number;
   /** Voice level 0–1: the surface reacts to speech. */
   level?: number;
@@ -17,10 +17,10 @@ interface PillProps {
 
 /**
  * The Tolkovo pill: a vertical glass capsule with a white microphone at the
- * bottom and burgundy water inside (see Liquid). The ref reaches the water,
- * so a dragged pill can make it slosh.
+ * bottom and burgundy gel inside (see Gel). The ref reaches the gel, so a
+ * dragged pill can make it lag behind.
  */
-export const Pill = forwardRef<LiquidHandle, PillProps>(
+export const Pill = forwardRef<GelHandle, PillProps>(
   (
     { width, height, fill, settle = 0.5, level = 0, className = "", style },
     ref,
@@ -33,7 +33,7 @@ export const Pill = forwardRef<LiquidHandle, PillProps>(
         className={`tk-pill ${className}`}
         style={{ width, height, borderRadius: width / 2, ...style }}
       >
-        <Liquid
+        <Gel
           ref={ref}
           width={width}
           height={height}

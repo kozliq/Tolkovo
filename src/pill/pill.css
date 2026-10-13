@@ -12,57 +12,111 @@
   border-radius: 16px;
   cursor: default;
   touch-action: none;
-  transform-origin: 50% 70%;
+  transform-origin: 50% 50%;
   will-change: transform, opacity;
 }
 
 /*
- * Soft-body transitions, transform + opacity only: both run on the GPU
- * compositor, so they stay smooth even though the pill's glass uses
- * backdrop-filter (animating filter: blur() on top of that forced a CPU
- * repaint every frame and dropped frames).
+ * Switching on and off like an old CRT TV, fast. With Apple's Liquid Glass
+ * the collapse itself is done natively (pill.rs, play_tv) so the glass and
+ * the gel shrink together; the webview only adds the bright scan-line flash.
+ * Without native glass (macOS < 26) CSS does the whole effect.
  */
-.tk-pill-hit[data-anim="leave"] {
-  animation: tk-blob-out 520ms cubic-bezier(0.5, 0, 0.75, 0.35) forwards;
+.tk-pill-hit {
+  position: relative;
 }
 
-.tk-pill-hit[data-anim="enter"] {
-  animation: tk-blob-in 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.tk-pill-hit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tk-pill-hit[data-anim="leave"]::after {
+  animation: tk-tv-flash-off 340ms linear forwards;
+}
+
+.tk-pill-hit[data-anim="enter"]::after {
+  animation: tk-tv-flash-on 400ms linear forwards;
 }
 
 .tk-pill-hit[data-anim="gone"] {
   opacity: 0;
 }
 
-@keyframes tk-blob-out {
+/* CSS-only TV for systems without native glass. */
+.tk-pill-hit:not([data-native])[data-anim="leave"] {
+  animation: tk-tv-off 340ms linear forwards;
+}
+
+.tk-pill-hit:not([data-native])[data-anim="enter"] {
+  animation: tk-tv-on 400ms linear both;
+}
+
+@keyframes tk-tv-flash-off {
   0% {
-    transform: scale(1, 1);
-    opacity: 1;
+    opacity: 0;
   }
   45% {
-    transform: scale(1.16, 0.7);
-    opacity: 0.9;
+    opacity: 0.85;
+  }
+  82% {
+    opacity: 1;
   }
   100% {
-    transform: scale(0.5, 0.24);
     opacity: 0;
   }
 }
 
-@keyframes tk-blob-in {
+@keyframes tk-tv-flash-on {
   0% {
-    transform: scale(0.5, 0.24);
     opacity: 0;
   }
-  35% {
-    transform: scale(1.12, 0.82);
+  18% {
     opacity: 1;
   }
-  60% {
-    transform: scale(0.96, 1.05);
+  50% {
+    opacity: 0.85;
   }
-  80% {
-    transform: scale(1.015, 0.99);
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tk-tv-off {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08, 0.025);
+    opacity: 1;
+  }
+  82% {
+    transform: scale(0.03, 0.025);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes tk-tv-on {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0;
+  }
+  18% {
+    transform: scale(0.03, 0.025);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08, 0.025);
   }
   100% {
     transform: scale(1, 1);
@@ -72,11 +126,16 @@
 
 /* Reduce Motion: no shape changes — a plain, quick fade. */
 @media (prefers-reduced-motion: reduce) {
-  .tk-pill-hit[data-anim="leave"] {
+  .tk-pill-hit[data-anim="leave"],
+  .tk-pill-hit:not([data-native])[data-anim="leave"] {
     animation: tk-fade-out 200ms ease forwards;
   }
-  .tk-pill-hit[data-anim="enter"] {
+  .tk-pill-hit[data-anim="enter"],
+  .tk-pill-hit:not([data-native])[data-anim="enter"] {
     animation: tk-fade-in 200ms ease both;
+  }
+  .tk-pill-hit::after {
+    animation: none !important;
   }
 }
 
@@ -97,4 +156,13 @@
   box-shadow:
     0 7px 17px rgba(0, 0, 0, 0.36),
     inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+/* Apple's Liquid Glass is drawn natively under the webview: no CSS glass. */
+.tk-pill-live.tk-pill-native {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: transparent;
+  box-shadow: none;
 }

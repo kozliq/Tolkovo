@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { commands } from "@/bindings";
 import { Pill } from "@/tolkovo/components/Pill";
-import type { LiquidHandle } from "@/tolkovo/components/Liquid";
+import type { GelHandle } from "@/tolkovo/components/Gel";
 import "@/tolkovo/tolkovo.css";
 import "./pill.css";
 
@@ -11,10 +11,7 @@ type Anim = "enter" | "leave" | "gone" | null;
 
 /** Pixels the pointer must travel before a press becomes a drag. */
 const DRAG_THRESHOLD = 3;
-/**
- * Liquid level while recording. Not quite to the brim, so the water
- * surface — which reacts to the voice — stays in view.
- */
+/** How far up the gel grows while recording. */
 const RECORDING_FILL = 76;
 
 /**
@@ -28,7 +25,10 @@ const PillWindow = () => {
   const [state, setState] = useState<PillState>("idle");
   const [level, setLevel] = useState(0);
   const [anim, setAnim] = useState<Anim>(null);
-  const water = useRef<LiquidHandle | null>(null);
+  // On macOS 26+ the capsule is Apple's own Liquid Glass (a native view under
+  // this webview); the CSS imitation of glass is then switched off.
+  const [nativeGlass, setNativeGlass] = useState(false);
+  const water = useRef<GelHandle | null>(null);
   const smooth = useRef(0);
   const drag = useRef<{
     x: number;
@@ -41,6 +41,10 @@ const PillWindow = () => {
   } | null>(null);
 
   useEffect(() => {
+    commands
+      .tolkovoPillNativeGlass()
+      .then(setNativeGlass)
+      .catch(() => {});
     commands
       .tolkovoPillState()
       .then((s) => setState(s as PillState))
@@ -147,6 +151,7 @@ const PillWindow = () => {
       <div
         className="tk-pill-hit"
         data-anim={anim ?? undefined}
+        data-native={nativeGlass ? "" : undefined}
         onAnimationEnd={() => anim === "enter" && setAnim(null)}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -160,7 +165,7 @@ const PillWindow = () => {
           fill={recording ? RECORDING_FILL : 0}
           level={recording ? level : 0}
           settle={recording ? 0.5 : 0.7}
-          className="tk-pill-live"
+          className={`tk-pill-live${nativeGlass ? " tk-pill-native" : ""}`}
         />
       </div>
     </div>
