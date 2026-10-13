@@ -19,3 +19,9 @@ src-tauri/src/catalog/catalog.json
 # Misc
 .DS_Store
 *.log
+
+# Tolkovo: design mockups and docs come from the design kit as-is
+# (the README is hand-laid-out HTML for GitHub)
+design/
+README.md
+TOLKOVO.md

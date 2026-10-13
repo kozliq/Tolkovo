@@ -709,5 +709,106 @@
     "learnMore": "해결 방법",
     "recorderBlocked": "지금은 단축키를 등록할 수 없습니다. macOS Secure Input이 키 이벤트를 차단하고 있습니다. Secure Input 경고를 먼저 해결하세요.",
     "dismiss": "닫기"
+  },
+  "tolkovo": {
+    "welcome": {
+      "title": "Hi. This is Tolkovo.",
+      "text": "Press {{hotkey}} and speak — the text appears where your cursor is. Everything runs right on your Mac.",
+      "mic": {
+        "title": "Microphone",
+        "text": "To hear you. The recording never leaves your Mac."
+      },
+      "paste": {
+        "title": "Typing text",
+        "text": "Accessibility — to type for you in any window."
+      },
+      "allow": "Allow",
+      "waiting": "Waiting…",
+      "granted": "Done",
+      "next": "Next"
+    },
+    "download": {
+      "title": "Learning to understand Russian",
+      "text": "This happens once. After that Tolkovo works offline — even on a plane.",
+      "almost": "Almost ready…",
+      "failed": "That didn't work. Check your internet and try again.",
+      "retry": "Try again"
+    },
+    "ready": {
+      "title": "Done. Speak.",
+      "text": "You can close this window — Tolkovo waits in the menu bar. Drag the pill anywhere on the screen.",
+      "try": "Try it"
+    },
+    "step": "Step {{current}} of {{total}}",
+    "keys": {
+      "option": "⌥",
+      "space": "Space",
+      "plus": "+"
+    },
+    "errors": {
+      "micTitle": "No microphone access",
+      "micText": "Let Tolkovo hear you: System Settings → Privacy & Security → Microphone.",
+      "noMicTitle": "No microphone found",
+      "noMicText": "Connect a microphone and try again.",
+      "recordTitle": "Couldn't record",
+      "pasteTitle": "Couldn't paste the text",
+      "pasteText": "Try again. If it keeps failing, pick another paste method in Advanced.",
+      "recognizeTitle": "Couldn't understand the speech",
+      "tryAgain": "Please try again."
+    },
+    "settings": {
+      "title": "Settings",
+      "hotkey": {
+        "title": "Hotkey",
+        "hint": "Hold and speak — or press at the start and at the end",
+        "press": "Press keys…",
+        "failed": "Couldn't change the hotkey",
+        "blocked": "macOS is blocking keyboard input right now. Close the password window and try again."
+      },
+      "pill": {
+        "title": "Pill on screen",
+        "label": "When to show the pill",
+        "always": "Always",
+        "recording": "While recording"
+      },
+      "autostart": "Start with the Mac",
+      "dictionary": {
+        "title": "Dictionary",
+        "hint": "Tolkovo fixes these words after recognition",
+        "add": "Add",
+        "empty": "Empty for now. Soon you can teach Tolkovo to spell words your way."
+      },
+      "advancedLink": "Advanced",
+      "about": "Tolkovo {{version}} · free forever"
+    },
+    "advanced": {
+      "title": "Advanced",
+      "back": "Settings",
+      "model": {
+        "title": "Recognition model",
+        "hint": "The standard one understands Russian best.",
+        "standard": "Standard",
+        "notDownloaded": "{{name}} (not downloaded)",
+        "downloading": "Downloading… {{pct}}%",
+        "cleanup": "Delete others",
+        "cleanupHint": "Free up space: keep only the selected model.",
+        "failed": "Couldn't switch the model"
+      },
+      "mic": {
+        "title": "Microphone",
+        "system": "System default"
+      },
+      "paste": {
+        "title": "How to paste text",
+        "ctrl_v": "Via clipboard (⌘V)",
+        "direct": "Type letter by letter",
+        "none": "Don't paste — copy only"
+      },
+      "sounds": "Start and stop sounds",
+      "data": {
+        "title": "Data folder",
+        "open": "Open"
+      }
+    }
   }
 }
