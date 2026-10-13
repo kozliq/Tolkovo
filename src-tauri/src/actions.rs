@@ -440,6 +440,9 @@ pub(crate) async fn process_transcription_output(
         final_text = converted_text;
     }
 
+    // Tolkovo: personal dictionary ("гитхаб" → "GitHub").
+    final_text = crate::tolkovo::dictionary::apply(app, &final_text);
+
     if post_process {
         if let Some(processed_text) = post_process_transcription(&settings, &final_text).await {
             post_processed_text = Some(processed_text.clone());

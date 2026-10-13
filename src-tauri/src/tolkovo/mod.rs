@@ -5,6 +5,7 @@
 //! Handy's own files stay small: `lib.rs`, `overlay.rs` and `tray.rs` only get
 //! one-line hooks into this module.
 
+pub mod dictionary;
 pub mod menu;
 pub mod pill;
 

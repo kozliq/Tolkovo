@@ -648,6 +648,9 @@ pub fn run(cli_args: CliArgs) {
     let specta_builder = Builder::<tauri::Wry>::new()
         .commands(collect_commands![
             tolkovo::tolkovo_onboarding_finished,
+            tolkovo::dictionary::tolkovo_dictionary_get,
+            tolkovo::dictionary::tolkovo_dictionary_set,
+            tolkovo::dictionary::tolkovo_dictionary_starter_count,
             tolkovo::pill::tolkovo_pill_click,
             tolkovo::pill::tolkovo_pill_drag,
             tolkovo::pill::tolkovo_pill_native_glass,
