@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"><defs>
+<radialGradient id="g1" cx="18%" cy="20%" r="55%"><stop offset="0" stop-color="#3a2c5c"/><stop offset="1" stop-color="#3a2c5c" stop-opacity="0"/></radialGradient>
+<radialGradient id="g2" cx="88%" cy="85%" r="50%"><stop offset="0" stop-color="#5c2231"/><stop offset="1" stop-color="#5c2231" stop-opacity="0"/></radialGradient>
+<radialGradient id="g3" cx="75%" cy="8%" r="45%"><stop offset="0" stop-color="#1d3c5e"/><stop offset="1" stop-color="#1d3c5e" stop-opacity="0"/></radialGradient>
+<linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A3263C"/><stop offset="1" stop-color="#5B1426"/></linearGradient>
+<linearGradient id="cherry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9c"/><stop offset=".5" stop-color="#e0566e"/><stop offset="1" stop-color="#a3263c"/></linearGradient>
+</defs><style>@keyframes liq{0%{transform:scaleY(0)}8.89%{transform:scaleY(0)}15.56%{transform:scaleY(1)}51.11%{transform:scaleY(1)}57.78%{transform:scaleY(0)}100%{transform:scaleY(0)}}@keyframes keys{0%{transform:translateY(0)}8.33%{transform:translateY(0)}9.44%{transform:translateY(4px)}50.56%{transform:translateY(4px)}51.67%{transform:translateY(0)}100%{transform:translateY(0)}}@keyframes keyfill{0%{fill:rgba(255,255,255,.09)}8.33%{fill:rgba(255,255,255,.09)}9.44%{fill:rgba(163,38,60,.6)}50.56%{fill:rgba(163,38,60,.6)}51.67%{fill:rgba(255,255,255,.09)}100%{fill:rgba(255,255,255,.09)}}@keyframes bub{0%{opacity:0}13.33%{opacity:0}16.11%{opacity:1}51.11%{opacity:1}54.44%{opacity:0}100%{opacity:0}}@keyframes inp{0%{opacity:0}52.22%{opacity:0}54.44%{opacity:1}67.78%{opacity:1}68.89%{opacity:0}100%{opacity:0}}@keyframes ph{0%{opacity:1}52.22%{opacity:1}52.78%{opacity:0}68.89%{opacity:0}70.00%{opacity:1}100%{opacity:1}}@keyframes out{0%{opacity:0;transform:translateY(10px)}68.89%{opacity:0;transform:translateY(10px)}72.22%{opacity:1;transform:translateY(0)}95.56%{opacity:1;transform:translateY(0)}99.44%{opacity:0;transform:translateY(0)}100%{opacity:0}}@keyframes glow{0%{opacity:0}8.89%{opacity:0}15.56%{opacity:1}51.11%{opacity:1}57.78%{opacity:0}100%{opacity:0}}@keyframes w0{0%{fill-opacity:0}16.67%{fill-opacity:0}17.56%{fill-opacity:.42}22.78%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w1{0%{fill-opacity:0}19.56%{fill-opacity:0}20.44%{fill-opacity:.42}25.67%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w2{0%{fill-opacity:0}22.44%{fill-opacity:0}23.33%{fill-opacity:.42}28.56%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w3{0%{fill-opacity:0}25.33%{fill-opacity:0}26.22%{fill-opacity:.42}31.44%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w4{0%{fill-opacity:0}28.22%{fill-opacity:0}29.11%{fill-opacity:.42}34.33%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w5{0%{fill-opacity:0}31.11%{fill-opacity:0}32.00%{fill-opacity:.42}37.22%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w6{0%{fill-opacity:0}34.00%{fill-opacity:0}34.89%{fill-opacity:.42}40.11%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w7{0%{fill-opacity:0}36.89%{fill-opacity:0}37.78%{fill-opacity:.42}43.00%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}@keyframes w8{0%{fill-opacity:0}39.78%{fill-opacity:0}40.67%{fill-opacity:.42}45.89%{fill-opacity:1}51.11%{fill-opacity:1}54.44%{fill-opacity:0}100%{fill-opacity:0}}</style><rect width="1280" height="640" rx="28" fill="#111116"/><rect width="1280" height="640" rx="28" fill="url(#g1)"/><rect width="1280" height="640" rx="28" fill="url(#g2)"/><rect width="1280" height="640" rx="28" fill="url(#g3)"/>
+<g>
+  <rect x="70" y="60" width="700" height="520" rx="18" fill="#1b1b20" stroke="rgba(255,255,255,.08)"/>
+  <circle cx="94" cy="84" r="6" fill="#ff5f57"/><circle cx="114" cy="84" r="6" fill="#febc2e"/><circle cx="134" cy="84" r="6" fill="#28c840"/>
+  <text x="420" y="90" text-anchor="middle" font-size="16" font-weight="600" fill="#fff">Саша</text>
+  <rect x="70" y="112" width="700" height="1" fill="rgba(255,255,255,.07)"/>
+  <rect x="94" y="360" width="250" height="40" rx="18" fill="#26262c"/>
+  <text x="112" y="386" font-size="16" fill="#fff">Ну что, глянешь сегодня?</text>
+  <g style="animation:out 9.0s linear infinite">
+    <rect x="420" y="416" width="326" height="64" rx="18" fill="#8e2138"/>
+    <text x="438" y="443" font-size="16" fill="#fff">Да, скинь ссылку на GitHub — вечером</text>
+    <text x="438" y="466" font-size="16" fill="#fff">гляну pull request.</text>
+  </g>
+  <rect x="90" y="504" width="660" height="52" rx="26" fill="#26262c"/>
+  <text x="114" y="536" font-size="16" fill="rgba(255,255,255,.35)" style="animation:ph 9.0s linear infinite">Сообщение</text>
+  <text x="114" y="536" font-size="15" fill="#fff" style="animation:inp 9.0s linear infinite">Да, скинь ссылку на GitHub — вечером гляну pull request.</text>
+</g>
+<g style="animation:bub 9.0s linear infinite">
+  <rect x="796" y="140" width="292" height="150" rx="20" fill="rgba(22,22,27,.78)" stroke="rgba(255,255,255,.16)"/>
+  <circle cx="820" cy="168" r="4" fill="#c23a52"/>
+  <text x="832" y="172" font-size="12" font-weight="700" letter-spacing="1" fill="rgba(255,255,255,.64)">СЛУШАЮ</text>
+  <text x="816" y="204" font-size="18"><tspan style="animation:w0 9.0s linear infinite" fill="#fff">Да, </tspan><tspan style="animation:w1 9.0s linear infinite" fill="#fff">скинь </tspan><tspan style="animation:w2 9.0s linear infinite" fill="#fff">ссылку </tspan></text>
+  <text x="816" y="234" font-size="18"><tspan style="animation:w3 9.0s linear infinite" fill="#fff">на </tspan><tspan style="animation:w4 9.0s linear infinite" fill="#fff">GitHub — </tspan><tspan style="animation:w5 9.0s linear infinite" fill="#fff">вечером </tspan></text>
+  <text x="816" y="264" font-size="18"><tspan style="animation:w6 9.0s linear infinite" fill="#fff">гляну </tspan><tspan style="animation:w7 9.0s linear infinite" fill="#fff">pull </tspan><tspan style="animation:w8 9.0s linear infinite" fill="#fff">request. </tspan></text>
+</g>
+<g>
+  <ellipse cx="1142" cy="250" rx="80" ry="110" fill="#a3263c" opacity="0" style="animation:glow 9.0s linear infinite; filter:blur(30px)"/>
+  <clipPath id="pc"><rect x="1104" y="150" width="76" height="190" rx="38"/></clipPath>
+  <rect x="1104" y="150" width="76" height="190" rx="38" fill="rgba(255,255,255,.10)"/>
+  <g clip-path="url(#pc)">
+    <rect x="1104" y="150" width="76" height="190" fill="url(#liq)" style="transform-origin:1142px 340px; animation:liq 9.0s linear infinite"/>
+  </g>
+  <g transform="translate(1142 312) scale(0.95)" stroke="#fff" stroke-width="3.2" stroke-linecap="round" fill="none"><rect x="-7" y="-22" width="14" height="24" rx="7" fill="#fff" stroke="none"/><path d="M-13 -4 a13 13 0 0 0 26 0"/><path d="M0 9 v6"/></g>
+  <rect x="1104" y="150" width="76" height="190" rx="38" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+</g>
+<g style="animation:keys 9.0s linear infinite">
+  <rect x="930" y="500" width="56" height="50" rx="12" stroke="rgba(255,255,255,.22)" style="animation:keyfill 9.0s linear infinite"/>
+  <text x="958" y="533" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">⌥</text>
+  <text x="1004" y="533" text-anchor="middle" font-size="18" fill="rgba(255,255,255,.45)">+</text>
+  <rect x="1022" y="500" width="150" height="50" rx="12" stroke="rgba(255,255,255,.22)" style="animation:keyfill 9.0s linear infinite"/>
+  <text x="1097" y="532" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Space</text>
+</g>
+</svg>
