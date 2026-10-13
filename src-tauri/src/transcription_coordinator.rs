@@ -169,8 +169,18 @@ enum Effect {
 
 /// Commands processed sequentially by the coordinator thread.
 enum Command {
-    Input(InputEvent),
-    Cancel { recording_was_active: bool },
+    /// `at` is when the key event happened. The coordinator thread runs each
+    /// effect synchronously (a cold start loads the model and opens the mic,
+    /// ~0.4 s), so an input can sit in the channel for a while; stamping it
+    /// on dequeue made a quick tap look like a hold and stopped recording
+    /// right after the first start.
+    Input {
+        input: InputEvent,
+        at: Instant,
+    },
+    Cancel {
+        recording_was_active: bool,
+    },
     ProcessingFinished,
 }
 
@@ -566,8 +576,8 @@ impl TranscriptionCoordinator {
                     };
 
                     match cmd {
-                        Command::Input(input) => {
-                            if let Some(effect) = state.on_input(input, Instant::now()) {
+                        Command::Input { input, at } => {
+                            if let Some(effect) = state.on_input(input, at) {
                                 run_effect(&app, &mut state, effect);
                             }
                         }
@@ -635,14 +645,17 @@ impl TranscriptionCoordinator {
     ) {
         if self
             .tx
-            .send(Command::Input(InputEvent {
-                binding_id: binding_id.to_string(),
-                hotkey_string: hotkey_string.to_string(),
-                is_pressed,
-                mode,
-                hold_threshold,
-                external,
-            }))
+            .send(Command::Input {
+                input: InputEvent {
+                    binding_id: binding_id.to_string(),
+                    hotkey_string: hotkey_string.to_string(),
+                    is_pressed,
+                    mode,
+                    hold_threshold,
+                    external,
+                },
+                at: Instant::now(),
+            })
             .is_err()
         {
             warn!("Transcription coordinator channel closed");
