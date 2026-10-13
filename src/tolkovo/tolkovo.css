@@ -57,7 +57,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 46px 44px 28px;
+  padding: 40px 44px 28px;
   box-sizing: border-box;
 }
 
@@ -154,6 +154,9 @@
 
 .tk-footer {
   margin-top: auto;
+  /* Never let the button touch the content above (system fonts wrap more
+     than the mockup's). */
+  padding-top: 20px;
   width: 100%;
   display: flex;
   align-items: center;

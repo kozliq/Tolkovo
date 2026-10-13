@@ -105,7 +105,7 @@ export const Welcome = ({ onNext }: WelcomeProps) => {
       <h1 className="tk-h1">{t("tolkovo.welcome.title")}</h1>
       <p className="tk-lead">{t("tolkovo.welcome.text", { hotkey })}</p>
 
-      <div className="tk-group" style={{ marginTop: 26 }}>
+      <div className="tk-group" style={{ marginTop: 22 }}>
         <div className="tk-perm">
           <div className="tk-perm-icon">
             <MicIcon size={18} />
