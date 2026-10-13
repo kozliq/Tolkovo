@@ -127,9 +127,7 @@ gh attestation verify Tolkovo.dmg --repo kozliq/Tolkovo
 Tolkovo — форк открытого проекта <a href="https://github.com/cjpais/Handy">Handy</a> от CJ Pais. От него — надёжное ядро записи и распознавания, от нас — всё, что ты видишь и трогаешь.
 </details>
 
-## Кто делает
-
-Меня зовут **kozliq**. Я не программист из Кремниевой долины — я парень из Омска, который захотел, чтобы печатать голосом было так же просто, как говорить. Tolkovo я собираю вместе с Claude: GitHub и нейросети у нас те же, что у ребят из Сан-Франциско, а остальное — упорство.
+## Новости
 
 Следить за разработкой: [Telegram-канал](https://t.me/Tolkovo0)
 
@@ -156,7 +154,7 @@ Tolkovo — форк **[Handy](https://github.com/cjpais/Handy)** от CJ Pais: 
 
 **Tolkovo** is a free, offline, privacy-first voice typing app for macOS, made for Russian speakers. Press <kbd>⌥ Space</kbd>, speak, and the text appears wherever your cursor is. Runs GigaAM v3 locally — a model trained on Russian speech. No cloud, no telemetry, no accounts.
 
-Made by kozliq from Omsk, together with Claude. A fork of the excellent [Handy](https://github.com/cjpais/Handy) — for the original cross-platform, English-first experience, go there.
+A fork of the excellent [Handy](https://github.com/cjpais/Handy) — for the original cross-platform, English-first experience, go there.
 </details>
 
 <p align="center">
