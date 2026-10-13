@@ -22,7 +22,8 @@ async tolkovoPillClick() : Promise<void> {
  * (`startDragging`): a system drag activates the app and made macOS jump to
  * the Space the window "belongs" to. Moving the frame ourselves never
  * activates anything, so the user stays in their app.
- * `phase` is "start" or "move"; coordinates are screen points.
+ * `phase` is "start", "move" or "end"; coordinates are screen points. A
+ * "move" without a fresh "start" is ignored, so the pill never jumps.
  */
 async tolkovoPillDrag(phase: string, screenX: number, screenY: number) : Promise<void> {
     await TAURI_INVOKE("tolkovo_pill_drag", { phase, screenX, screenY });

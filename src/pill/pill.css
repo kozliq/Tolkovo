@@ -37,11 +37,11 @@
 }
 
 .tk-pill-hit[data-anim="leave"]::after {
-  animation: tk-tv-flash-off 340ms linear forwards;
+  animation: tk-tv-flash-off 300ms linear forwards;
 }
 
 .tk-pill-hit[data-anim="enter"]::after {
-  animation: tk-tv-flash-on 400ms linear forwards;
+  animation: tk-tv-flash-on 360ms linear forwards;
 }
 
 .tk-pill-hit[data-anim="gone"] {
@@ -50,21 +50,21 @@
 
 /* CSS-only TV for systems without native glass. */
 .tk-pill-hit:not([data-native])[data-anim="leave"] {
-  animation: tk-tv-off 340ms linear forwards;
+  animation: tk-tv-off 300ms linear forwards;
 }
 
 .tk-pill-hit:not([data-native])[data-anim="enter"] {
-  animation: tk-tv-on 400ms linear both;
+  animation: tk-tv-on 360ms linear both;
 }
 
 @keyframes tk-tv-flash-off {
-  0% {
+  /* Dark while the capsule squashes; bright only as a line and a dot. */
+  0%,
+  24% {
     opacity: 0;
   }
-  45% {
-    opacity: 0.85;
-  }
-  82% {
+  32%,
+  70% {
     opacity: 1;
   }
   100% {
@@ -73,15 +73,13 @@
 }
 
 @keyframes tk-tv-flash-on {
-  0% {
-    opacity: 0;
-  }
+  /* Bright only as the dot and the line; dark before the capsule opens up
+     (the CSS starts a frame or two after the native animation). */
+  0%,
   18% {
     opacity: 1;
   }
-  50% {
-    opacity: 0.85;
-  }
+  38%,
   100% {
     opacity: 0;
   }
@@ -92,12 +90,11 @@
     transform: scale(1, 1);
     opacity: 1;
   }
-  50% {
-    transform: scale(1.08, 0.025);
-    opacity: 1;
+  30% {
+    transform: scale(1, 0.03);
   }
-  82% {
-    transform: scale(0.03, 0.025);
+  70% {
+    transform: scale(0.04, 0.03);
     opacity: 1;
   }
   100% {
@@ -111,12 +108,12 @@
     transform: scale(0, 0);
     opacity: 0;
   }
-  18% {
-    transform: scale(0.03, 0.025);
+  25% {
+    transform: scale(0.04, 0.03);
     opacity: 1;
   }
-  50% {
-    transform: scale(1.08, 0.025);
+  55% {
+    transform: scale(1, 0.03);
   }
   100% {
     transform: scale(1, 1);

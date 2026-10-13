@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Tolkovo app icon source. Render to PNG (1024) and run `bun tauri icon`.
+       The pill on Liquid Glass with the burgundy lava-lamp gel inside —
+       the same materials as the on-screen pill. -->
+  <defs>
+    <!-- macOS icon grid: 824×824 body inside a 1024 canvas. -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d2c33"/>
+      <stop offset="1" stop-color="#0f0f13"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.78" r="0.55">
+      <stop offset="0" stop-color="#8e2138" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8e2138" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.7"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.38"/>
+    </linearGradient>
+    <linearGradient id="glassFill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.13"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.10"/>
+    </linearGradient>
+    <linearGradient id="bodyEdge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="0.12" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="gelBody" cx="0.4" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#d0465f"/>
+      <stop offset="0.55" stop-color="#9a2440"/>
+      <stop offset="1" stop-color="#5b1426"/>
+    </radialGradient>
+    <clipPath id="capsuleClip">
+      <rect x="362" y="200" width="300" height="624" rx="150"/>
+    </clipPath>
+    <!-- Goo: merge the balls into one drop; then light it for the gel shine. -->
+    <filter id="goo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="24" result="blur"/>
+      <feColorMatrix in="blur" mode="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="goo"/>
+      <feGaussianBlur in="goo" stdDeviation="14" result="soft"/>
+      <feSpecularLighting in="soft" surfaceScale="40" specularConstant="1.0"
+        specularExponent="28" lighting-color="#ffd6de" result="spec">
+        <fePointLight x="420" y="120" z="520"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="goo" operator="in" result="shine"/>
+      <feComposite in="goo" in2="shine" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0"/>
+    </filter>
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <!-- Body -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#glow)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bodyEdge)"/>
+
+  <!-- Capsule shadow -->
+  <rect x="372" y="236" width="280" height="610" rx="140" fill="#000" opacity="0.55" filter="url(#softShadow)"/>
+
+  <!-- Glass capsule -->
+  <rect x="362" y="200" width="300" height="624" rx="150" fill="url(#glassFill)"/>
+
+  <!-- Gel, clipped to the inside of the capsule -->
+  <g clip-path="url(#capsuleClip)">
+    <g filter="url(#goo)" fill="url(#gelBody)">
+      <circle cx="512" cy="735" r="128"/>
+      <circle cx="478" cy="610" r="104"/>
+      <circle cx="548" cy="520" r="86"/>
+      <circle cx="502" cy="458" r="58"/>
+      <!-- a drop rising on its own, the lava-lamp signature -->
+      <circle cx="536" cy="296" r="40"/>
+    </g>
+  </g>
+
+  <!-- Glass rim and highlight on top of the gel -->
+  <rect x="364" y="202" width="296" height="620" rx="148" fill="none" stroke="url(#rim)" stroke-width="5"/>
+  <path d="M 410 300 Q 412 248 470 232" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Microphone at the bottom of the capsule -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" transform="translate(512 742) scale(4.2) translate(-12 -12)">
+    <rect x="9" y="3" width="6" height="11" rx="3" stroke-width="2"/>
+    <path d="M5 11a7 7 0 0 0 14 0" stroke-width="2"/>
+    <path d="M12 18v3" stroke-width="2"/>
+  </g>
+</svg>

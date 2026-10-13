@@ -33,12 +33,12 @@ const PILL_MARGIN: f64 = 16.0;
 const WINDOW_WIDTH: f64 = PILL_WIDTH + PILL_MARGIN * 2.0;
 const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
-/// How long the drain animation runs before a "when recording" pill hides.
-const DRAIN_MS: u64 = 700;
+/// How long the burgundy takes to drain (the CSS transition, with a margin).
+/// The drain starts when transcription starts, so after the text is pasted
+/// the pill only waits for whatever is left of it.
+const DRAIN_MS: u64 = 450;
 /// Length of the "old TV switching off" leave animation (see play_tv).
-const LEAVE_MS: u64 = 380;
-/// Voice level updates sent to the pill (the wave follows your voice).
-const LEVEL_THROTTLE_MS: u64 = 40;
+const LEAVE_MS: u64 = 330;
 
 const STORE_PATH: &str = "tolkovo.json";
 const KEY_POSITION: &str = "pill_position";
@@ -73,7 +73,8 @@ static GENERATION: AtomicU64 = AtomicU64::new(0);
 static MOVE_GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Bumped on every show/hide request so a delayed hide can tell it is stale.
 static VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
-static LAST_LEVEL_EMIT: AtomicU64 = AtomicU64::new(0);
+/// When the current drain began (Draining state), to time the hide.
+static DRAIN_STARTED: Mutex<Option<std::time::Instant>> = Mutex::new(None);
 /// Where a drag started: cursor and window origin (logical points).
 static DRAG_ORIGIN: Mutex<Option<(f64, f64, f64, f64)>> = Mutex::new(None);
 
@@ -328,19 +329,23 @@ fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
         };
 
         // Off: full → thin bright line → dot → gone. On: the reverse.
-        let mut frames = vec![
-            (0.0, around_center(1.0, 1.0)),
-            (0.5, around_center(1.08, 0.025)),
-            (0.82, around_center(0.03, 0.025)),
-            (1.0, around_center(0.001, 0.001)),
-        ];
-        if !closing {
-            frames.reverse();
-            frames = frames
-                .into_iter()
-                .map(|(t, v)| (1.0 - t, v))
-                .collect::<Vec<_>>();
-        }
+        // The squash to a line is quick so the in-between capsule shape
+        // never reads as a squashed barrel; the line and the dot linger.
+        let frames = if closing {
+            vec![
+                (0.0, around_center(1.0, 1.0)),
+                (0.3, around_center(1.0, 0.03)),
+                (0.7, around_center(0.04, 0.03)),
+                (1.0, around_center(0.001, 0.001)),
+            ]
+        } else {
+            vec![
+                (0.0, around_center(0.001, 0.001)),
+                (0.25, around_center(0.04, 0.03)),
+                (0.55, around_center(1.0, 0.03)),
+                (1.0, around_center(1.0, 1.0)),
+            ]
+        };
         let values: Vec<Retained<AnyObject>> = frames
             .iter()
             .map(|(_, v)| Retained::into_super(Retained::into_super(v.clone())))
@@ -352,7 +357,7 @@ fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
             CAKeyframeAnimation::animationWithKeyPath(Some(&NSString::from_str("transform")));
         anim.setValues(Some(&NSArray::from_retained_slice(&values)));
         anim.setKeyTimes(Some(&NSArray::from_retained_slice(&times)));
-        anim.setDuration(if closing { 0.34 } else { 0.4 });
+        anim.setDuration(if closing { 0.3 } else { 0.36 });
         if closing {
             // Stay collapsed until the window is hidden.
             anim.setFillMode(kCAFillModeForwards);
@@ -437,9 +442,10 @@ fn attach_native_glass(window: &tauri::WebviewWindow) {
         );
         let glass: *mut AnyObject = msg_send![glass_class, alloc];
         let glass: *mut AnyObject = msg_send![glass, initWithFrame: frame];
-        if glass.is_null() {
+        // alloc+init is +1; the superview takes its own reference below.
+        let Some(glass) = objc2::rc::Retained::<AnyObject>::from_raw(glass) else {
             return;
-        }
+        };
         let radius = PILL_WIDTH / 2.0;
         let set_radius: Sel = sel!(setCornerRadius:);
         let responds: Bool = msg_send![&*glass, respondsToSelector: set_radius];
@@ -463,7 +469,8 @@ fn attach_native_glass(window: &tauri::WebviewWindow) {
         }
         // NSWindowBelow = -1: under the webview, so the water draws on top.
         let none: *const AnyObject = std::ptr::null();
-        let _: () = msg_send![&*content, addSubview: glass, positioned: -1_isize, relativeTo: none];
+        let _: () =
+            msg_send![&*content, addSubview: &*glass, positioned: -1_isize, relativeTo: none];
     }
     NATIVE_GLASS.store(true, Ordering::SeqCst);
 }
@@ -537,20 +544,28 @@ fn watch_space_changes(app: &AppHandle) {
 /// Move the pill onto the active Space and play the "gathers from a blob"
 /// entrance. The webview first goes invisible, so the re-order never flashes.
 fn reborn(app: &AppHandle) {
+    let generation = VISIBILITY_GENERATION.load(Ordering::SeqCst);
     let _ = app.emit_to(PILL_LABEL, "tk-pill-prep", ());
     let app = app.clone();
     std::thread::spawn(move || {
         std::thread::sleep(Duration::from_millis(40));
         let handle = app.clone();
         let _ = app.run_on_main_thread(move || {
+            // The pill may have been switched off meanwhile: don't bring it
+            // back.
+            if VISIBILITY_GENERATION.load(Ordering::SeqCst) != generation {
+                return;
+            }
             if let Some(w) = handle.get_webview_window(PILL_LABEL) {
+                if !w.is_visible().unwrap_or(false) {
+                    return;
+                }
                 let _ = w.hide();
                 let _ = w.show();
                 play_tv(&w, false);
+                let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", true);
             }
         });
-        std::thread::sleep(Duration::from_millis(40));
-        let _ = app.emit_to(PILL_LABEL, "tk-pill-visible", true);
     });
 }
 
@@ -573,32 +588,59 @@ fn remember_position_soon(app: &AppHandle) {
 }
 
 fn set_state(app: &AppHandle, state: PillState) {
-    {
+    // State, generation and the event to the webview change together, so
+    // racing callers (set_tray_state runs on several threads) can't leave a
+    // stale generation or deliver states out of order.
+    let generation = {
         let mut current = CURRENT.lock().unwrap_or_else(|e| e.into_inner());
         if *current == state {
             return;
         }
         *current = state;
-    }
-    let generation = GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
-    let _ = app.emit_to(PILL_LABEL, "tk-pill-state", state);
+        let mut drain = DRAIN_STARTED.lock().unwrap_or_else(|e| e.into_inner());
+        match state {
+            PillState::Draining => *drain = Some(std::time::Instant::now()),
+            PillState::Recording => *drain = None,
+            PillState::Idle => {}
+        }
+        let generation = GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
+        let _ = app.emit_to(PILL_LABEL, "tk-pill-state", state);
+        generation
+    };
 
-    let always = get_mode(app) == PillMode::Always && onboarded(app);
     match state {
         PillState::Recording | PillState::Draining => show(app),
-        PillState::Idle if always => show(app),
+        PillState::Idle if !hides_when_idle(app) => show(app),
         PillState::Idle => {
-            // Let the liquid finish draining, then hide — unless a new
-            // recording started in the meantime.
+            // The burgundy drained while the text was being recognized; wait
+            // only for what is left of it (all of it after a cancel), then
+            // switch off — unless anything changed in the meantime.
+            let drained = DRAIN_STARTED
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .take()
+                .map(|t| t.elapsed())
+                .unwrap_or_default();
+            let wait = Duration::from_millis(DRAIN_MS).saturating_sub(drained);
             let app = app.clone();
             std::thread::spawn(move || {
-                std::thread::sleep(Duration::from_millis(DRAIN_MS));
-                if GENERATION.load(Ordering::SeqCst) == generation {
+                std::thread::sleep(wait);
+                let still_idle =
+                    *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) == PillState::Idle;
+                if GENERATION.load(Ordering::SeqCst) == generation
+                    && still_idle
+                    && hides_when_idle(&app)
+                {
                     hide(&app);
                 }
             });
         }
     }
+}
+
+/// Whether an idle pill should be off screen right now.
+fn hides_when_idle(app: &AppHandle) -> bool {
+    !(get_mode(app) == PillMode::Always && onboarded(app))
 }
 
 fn show(app: &AppHandle) {
@@ -634,7 +676,13 @@ fn hide(app: &AppHandle) {
     }
     let _ = w.emit_to(PILL_LABEL, "tk-pill-visible", false);
     let tv = w.clone();
-    let _ = app.run_on_main_thread(move || play_tv(&tv, true));
+    let _ = app.run_on_main_thread(move || {
+        // A show() that ran first (e.g. queued differently) wins: never
+        // leave the pill collapsed but on screen.
+        if VISIBILITY_GENERATION.load(Ordering::SeqCst) == generation {
+            play_tv(&tv, true);
+        }
+    });
     let app = app.clone();
     std::thread::spawn(move || {
         std::thread::sleep(Duration::from_millis(LEAVE_MS));
@@ -648,28 +696,6 @@ fn hide(app: &AppHandle) {
             }
         });
     });
-}
-
-/// Hook from Handy's `overlay::emit_levels` (audio callback, ~24 Hz): the
-/// voice level makes the liquid's surface ripple while you speak.
-pub fn on_levels(app: &AppHandle, levels: &[f32]) {
-    if *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) != PillState::Recording {
-        return;
-    }
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_millis() as u64;
-    if now.saturating_sub(LAST_LEVEL_EMIT.load(Ordering::Relaxed)) < LEVEL_THROTTLE_MS {
-        return;
-    }
-    LAST_LEVEL_EMIT.store(now, Ordering::Relaxed);
-    let level = if levels.is_empty() {
-        0.0
-    } else {
-        levels.iter().copied().fold(0.0_f32, f32::max)
-    };
-    let _ = app.emit_to(PILL_LABEL, "tk-pill-level", level.clamp(0.0, 1.0));
 }
 
 /// Show or hide the resting pill according to the mode and first-run state.
@@ -722,7 +748,8 @@ pub fn tolkovo_pill_state() -> String {
 /// (`startDragging`): a system drag activates the app and made macOS jump to
 /// the Space the window "belongs" to. Moving the frame ourselves never
 /// activates anything, so the user stays in their app.
-/// `phase` is "start" or "move"; coordinates are screen points.
+/// `phase` is "start", "move" or "end"; coordinates are screen points. A
+/// "move" without a fresh "start" is ignored, so the pill never jumps.
 #[tauri::command]
 #[specta::specta]
 pub fn tolkovo_pill_drag(app: AppHandle, phase: String, screen_x: f64, screen_y: f64) {
@@ -730,6 +757,10 @@ pub fn tolkovo_pill_drag(app: AppHandle, phase: String, screen_x: f64, screen_y:
         return;
     };
     let mut origin = DRAG_ORIGIN.lock().unwrap_or_else(|e| e.into_inner());
+    if phase == "end" {
+        *origin = None;
+        return;
+    }
     if phase == "start" {
         if let (Ok(pos), Ok(scale)) = (w.outer_position(), w.scale_factor()) {
             *origin = Some((

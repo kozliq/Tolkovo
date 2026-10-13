@@ -74,7 +74,7 @@ export const Download = ({ onDone }: DownloadProps) => {
 
   return (
     <div className="tk-onb" style={{ paddingTop: 60 }}>
-      <Pill width={76} height={168} fill={pct} settle={0.4} />
+      <Pill width={76} height={168} fill={pct} transitionMs={400} />
       <h1 className="tk-h1" style={{ marginTop: 30 }}>
         {t("tolkovo.download.title")}
       </h1>

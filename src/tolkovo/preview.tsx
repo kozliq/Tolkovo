@@ -83,7 +83,7 @@ const VoicePill = ({ fill }: { fill: number }) => {
   }, []);
   return (
     <div style={{ transform: "scale(1.6)" }}>
-      <Pill width={64} height={140} fill={fill} level={level} />
+      <Pill width={64} height={140} fill={fill} />
     </div>
   );
 };

@@ -728,7 +728,6 @@ pub fn update_overlay_enabled_cache(enabled: bool) {
 }
 
 pub fn emit_levels(app_handle: &AppHandle, levels: &[f32]) {
-    crate::tolkovo::pill::on_levels(app_handle, levels);
     // Skip emission when the overlay is disabled. The recording_overlay
     // window is created at boot regardless of overlay_style, so without this
     // guard a hidden overlay's WebKit subprocess still
