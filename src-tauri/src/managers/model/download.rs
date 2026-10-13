@@ -119,6 +119,38 @@ impl ModelManager {
         Ok(())
     }
 
+    /// Tolkovo: verify a file hf-hub just put into the shared cache against
+    /// the catalog hash (hf-hub itself checks nothing). The cache entry is a
+    /// symlink into `blobs/`, so on mismatch both the blob and the link go,
+    /// and the next attempt downloads from scratch.
+    pub(super) async fn verify_hf_download(
+        &self,
+        model_id: &str,
+        path: &Path,
+        expected_sha256: Option<&str>,
+    ) -> Result<()> {
+        let blob = fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
+        let app_handle = self.app_handle.clone();
+        let id = model_id.to_string();
+        let result =
+            Self::verify_file_with_events(model_id, &blob, expected_sha256, &move |event| {
+                let _ = match event {
+                    HttpDownloadEvent::VerificationStarted => {
+                        app_handle.emit("model-verification-started", &id)
+                    }
+                    HttpDownloadEvent::VerificationCompleted => {
+                        app_handle.emit("model-verification-completed", &id)
+                    }
+                    HttpDownloadEvent::Progress(_) => Ok(()),
+                };
+            })
+            .await;
+        if result.is_err() && blob != path {
+            let _ = fs::remove_file(path);
+        }
+        result
+    }
+
     /// [`Self::download_http_resumable_with_events`] wired to the Tauri event
     /// bus — the production entry point.
     pub(super) async fn download_http_resumable(

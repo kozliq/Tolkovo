@@ -2028,7 +2028,19 @@ impl ModelManager {
             watchdog.abort();
 
             match result {
-                Ok(_) => break None,
+                Ok(path) => {
+                    // Tolkovo: hf-hub checks nothing; verify against the
+                    // catalog hash. A mismatch deletes the file and falls
+                    // through to the (equally verified) mirror.
+                    let expected = crate::catalog::expected_sha256(&model_id);
+                    match self
+                        .verify_hf_download(&model_id, &path, expected.as_deref())
+                        .await
+                    {
+                        Ok(()) => break None,
+                        Err(e) => break Some(e),
+                    }
+                }
                 Err(hf_hub::api::tokio::ApiError::Cancelled) if cancel_token.is_cancelled() => {
                     // User cancelled. hf-hub leaves the partially downloaded
                     // `.sync.part` in the shared cache, so a later attempt resumes

@@ -443,7 +443,9 @@ pub(crate) async fn process_transcription_output(
     // Tolkovo: personal dictionary ("гитхаб" → "GitHub").
     final_text = crate::tolkovo::dictionary::apply(app, &final_text);
 
-    if post_process {
+    // Tolkovo: text never leaves the Mac, so the --toggle-post-process flag
+    // must not reach an LLM provider while post-processing is off.
+    if post_process && settings.post_process_enabled {
         if let Some(processed_text) = post_process_transcription(&settings, &final_text).await {
             post_processed_text = Some(processed_text.clone());
             final_text = processed_text;

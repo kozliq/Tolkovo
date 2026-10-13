@@ -135,6 +135,18 @@ pub struct MirrorFile {
     pub size_bytes: u64,
 }
 
+/// Tolkovo: the catalog's content hash for a model file
+/// (`"{repo_id}/{filename}"`), so Hugging Face downloads are verified against
+/// the same trust anchor as mirror downloads. `None` outside the catalog.
+pub fn expected_sha256(model_id: &str) -> Option<String> {
+    ROOT.models.iter().find_map(|m| {
+        m.files
+            .iter()
+            .find(|f| format!("{}/{}", m.id, f.filename) == model_id)
+            .and_then(|f| f.sha256.clone())
+    })
+}
+
 /// Ordered mirror URLs for a catalog model's file — any listed quant, not just
 /// the default — or empty when the model isn't from the catalog / no mirrors
 /// are configured. `model_id` is the registry id (`"{repo_id}/{filename}"`).
@@ -216,6 +228,17 @@ mod tests {
     use super::*;
     use crate::managers::model_capabilities::KNOWN_ARCHES;
     use std::collections::BTreeSet;
+
+    #[test]
+    fn tolkovo_model_has_a_catalog_hash() {
+        // The model Tolkovo downloads on first run (src/tolkovo/model.ts).
+        assert_eq!(
+            expected_sha256("handy-computer/gigaam-v3-e2e-rnnt-gguf/gigaam-v3-e2e-rnnt-Q8_0.gguf")
+                .as_deref(),
+            Some("78d63b47723b7f8d78c6113a6ef983b5a86e2a86f6c273e1f5cb6967b1c4467a")
+        );
+        assert_eq!(expected_sha256("not/in/catalog.gguf"), None);
+    }
 
     #[test]
     fn catalog_parses_and_is_nonempty() {
