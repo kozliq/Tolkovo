@@ -33,8 +33,8 @@ const PILL_MARGIN: f64 = 16.0;
 const WINDOW_WIDTH: f64 = PILL_WIDTH + PILL_MARGIN * 2.0;
 const WINDOW_HEIGHT: f64 = PILL_HEIGHT + PILL_MARGIN * 2.0;
 
-/// Length of the "old TV switching off" leave animation (see play_tv).
-const LEAVE_MS: u64 = 330;
+/// Length of the fade-out (see play_tv), with a small margin.
+const LEAVE_MS: u64 = 190;
 
 const STORE_PATH: &str = "tolkovo.json";
 const KEY_POSITION: &str = "pill_position";
@@ -67,6 +67,10 @@ static CURRENT: Mutex<PillState> = Mutex::new(PillState::Idle);
 static GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Bumped on every window move; the position is saved once moves settle.
 static MOVE_GENERATION: AtomicU64 = AtomicU64::new(0);
+/// Last time voice levels were sent to the pill (ms since the epoch).
+static LAST_LEVEL_EMIT: AtomicU64 = AtomicU64::new(0);
+/// Voice levels go to the pill at most this often (~30 fps).
+const LEVEL_THROTTLE_MS: u64 = 33;
 /// Bumped on every show/hide request so a delayed hide can tell it is stale.
 static VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
 /// Where a drag started: cursor and window origin (logical points).
@@ -273,14 +277,13 @@ pub fn create(app: &AppHandle) {
     watch_space_changes(app);
 }
 
-/// Key for the on/off animation on the pill's root layer.
+/// Key for the show/hide animation on the pill's root layer.
 const TV_KEY: &str = "tolkovo-tv";
 
-/// The pill switches on and off like an old CRT TV: off collapses the whole
-/// picture — the glass and the gel together — into a bright horizontal line,
-/// then a dot, then nothing; on plays it backwards. Done with Core Animation
-/// on the window's root layer, because the Liquid Glass view is native and
-/// does not follow CSS transforms (the webview only adds the bright flash).
+/// Showing and hiding is deliberately minimal so it never catches the eye:
+/// a quick fade with a barely noticeable scale (96% → 100% when appearing,
+/// the reverse when disappearing). It runs as Core Animation on the window's
+/// root layer, so the native Liquid Glass and the webview move together.
 #[cfg(target_os = "macos")]
 fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
     use objc2::msg_send;
@@ -288,8 +291,9 @@ fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
     use objc2::runtime::{AnyObject, Bool};
     use objc2_foundation::{NSArray, NSNumber, NSString, NSValue};
     use objc2_quartz_core::{
-        kCAFillModeBoth, kCAFillModeForwards, CAKeyframeAnimation, CALayer, CAMediaTiming,
-        CATransform3D, NSValueCATransform3DAdditions,
+        kCAFillModeBoth, kCAFillModeForwards, kCAMediaTimingFunctionEaseIn,
+        kCAMediaTimingFunctionEaseOut, CAAnimation, CAAnimationGroup, CABasicAnimation, CALayer,
+        CAMediaTiming, CAMediaTimingFunction, CATransform3D, NSValueCATransform3DAdditions,
     };
 
     let Ok(ptr) = window.ns_window() else {
@@ -315,52 +319,47 @@ fn play_tv(window: &tauri::WebviewWindow, closing: bool) {
         let anchor = layer.anchorPoint();
         let dx = bounds.size.width * (0.5 - anchor.x);
         let dy = bounds.size.height * (0.5 - anchor.y);
-        let around_center = |sx: f64, sy: f64| -> Retained<NSValue> {
+        let scaled = |k: f64| -> Retained<NSValue> {
             let t = CATransform3D::new_translation(-dx, -dy, 0.0)
-                .concat(CATransform3D::new_scale(sx, sy, 1.0))
+                .concat(CATransform3D::new_scale(k, k, 1.0))
                 .concat(CATransform3D::new_translation(dx, dy, 0.0));
             NSValue::valueWithCATransform3D(t)
         };
-
-        // Off: full → thin bright line → dot → gone. On: the reverse.
-        // The squash to a line is quick so the in-between capsule shape
-        // never reads as a squashed barrel; the line and the dot linger.
-        let frames = if closing {
-            vec![
-                (0.0, around_center(1.0, 1.0)),
-                (0.3, around_center(1.0, 0.03)),
-                (0.7, around_center(0.04, 0.03)),
-                (1.0, around_center(0.001, 0.001)),
-            ]
+        let (from_k, to_k, from_a, to_a) = if closing {
+            (1.0, 0.96, 1.0, 0.0)
         } else {
-            vec![
-                (0.0, around_center(0.001, 0.001)),
-                (0.25, around_center(0.04, 0.03)),
-                (0.55, around_center(1.0, 0.03)),
-                (1.0, around_center(1.0, 1.0)),
-            ]
+            (0.96, 1.0, 0.0, 1.0)
         };
-        let values: Vec<Retained<AnyObject>> = frames
-            .iter()
-            .map(|(_, v)| Retained::into_super(Retained::into_super(v.clone())))
-            .collect();
-        let times: Vec<Retained<NSNumber>> =
-            frames.iter().map(|(t, _)| NSNumber::new_f64(*t)).collect();
 
-        let anim =
-            CAKeyframeAnimation::animationWithKeyPath(Some(&NSString::from_str("transform")));
-        anim.setValues(Some(&NSArray::from_retained_slice(&values)));
-        anim.setKeyTimes(Some(&NSArray::from_retained_slice(&times)));
-        anim.setDuration(if closing { 0.3 } else { 0.36 });
-        if closing {
-            // Stay collapsed until the window is hidden.
-            anim.setFillMode(kCAFillModeForwards);
-            anim.setRemovedOnCompletion(false);
+        let scale = CABasicAnimation::animationWithKeyPath(Some(&NSString::from_str("transform")));
+        scale.setFromValue(Some(&scaled(from_k)));
+        scale.setToValue(Some(&scaled(to_k)));
+        let fade = CABasicAnimation::animationWithKeyPath(Some(&NSString::from_str("opacity")));
+        fade.setFromValue(Some(&NSNumber::new_f64(from_a)));
+        fade.setToValue(Some(&NSNumber::new_f64(to_a)));
+
+        let group = CAAnimationGroup::new();
+        // CABasicAnimation → CAPropertyAnimation → CAAnimation.
+        let parts: [Retained<CAAnimation>; 2] = [
+            Retained::into_super(Retained::into_super(scale)),
+            Retained::into_super(Retained::into_super(fade)),
+        ];
+        group.setAnimations(Some(&NSArray::from_retained_slice(&parts)));
+        group.setDuration(if closing { 0.16 } else { 0.18 });
+        group.setTimingFunction(Some(&CAMediaTimingFunction::functionWithName(if closing {
+            kCAMediaTimingFunctionEaseIn
         } else {
-            anim.setFillMode(kCAFillModeBoth);
-            anim.setRemovedOnCompletion(true);
+            kCAMediaTimingFunctionEaseOut
+        })));
+        if closing {
+            // Stay faded out until the window is hidden.
+            group.setFillMode(kCAFillModeForwards);
+            group.setRemovedOnCompletion(false);
+        } else {
+            group.setFillMode(kCAFillModeBoth);
+            group.setRemovedOnCompletion(true);
         }
-        layer.addAnimation_forKey(&anim, Some(&NSString::from_str(TV_KEY)));
+        layer.addAnimation_forKey(&group, Some(&NSString::from_str(TV_KEY)));
     }
 }
 
@@ -712,6 +711,24 @@ pub fn on_engine_state(app: &AppHandle, state: TrayIconState) {
 }
 
 // ---------- Commands ----------
+
+/// Hook from Handy's `overlay::emit_levels` (audio callback): the pill draws
+/// the voice as a vertical bar meter while recording. Only the levels are
+/// sent — 16 loudness numbers per frame, never the audio itself.
+pub fn on_levels(app: &AppHandle, levels: &[f32]) {
+    if *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) != PillState::Recording {
+        return;
+    }
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64;
+    if now.saturating_sub(LAST_LEVEL_EMIT.load(Ordering::Relaxed)) < LEVEL_THROTTLE_MS {
+        return;
+    }
+    LAST_LEVEL_EMIT.store(now, Ordering::Relaxed);
+    let _ = app.emit_to(PILL_LABEL, "tk-pill-levels", levels);
+}
 
 /// Click on the pill: start or stop recording, like the hotkey.
 #[tauri::command]

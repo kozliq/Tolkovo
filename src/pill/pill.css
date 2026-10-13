@@ -17,122 +17,74 @@
 }
 
 /*
- * Switching on and off like an old CRT TV, fast. With Apple's Liquid Glass
- * the collapse itself is done natively (pill.rs, play_tv) so the glass and
- * the gel shrink together; the webview only adds the bright scan-line flash.
- * Without native glass (macOS < 26) CSS does the whole effect.
+ * Showing and hiding is a quick, quiet fade with a barely noticeable scale.
+ * With Apple's Liquid Glass it runs natively (pill.rs, play_tv) so the glass
+ * and the webview move together; without it CSS does the same here.
  */
-.tk-pill-hit {
-  position: relative;
-}
-
-.tk-pill-hit::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: #ffffff;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tk-pill-hit[data-anim="leave"]::after {
-  animation: tk-tv-flash-off 300ms linear forwards;
-}
-
-.tk-pill-hit[data-anim="enter"]::after {
-  animation: tk-tv-flash-on 360ms linear forwards;
-}
-
 .tk-pill-hit[data-anim="gone"] {
   opacity: 0;
 }
 
-/* CSS-only TV for systems without native glass. */
 .tk-pill-hit:not([data-native])[data-anim="leave"] {
-  animation: tk-tv-off 300ms linear forwards;
+  animation: tk-pill-out 160ms ease-in forwards;
 }
 
 .tk-pill-hit:not([data-native])[data-anim="enter"] {
-  animation: tk-tv-on 360ms linear both;
+  animation: tk-pill-in 180ms ease-out both;
 }
 
-@keyframes tk-tv-flash-off {
-  /* Dark while the capsule squashes; bright only as a line and a dot. */
-  0%,
-  24% {
-    opacity: 0;
-  }
-  32%,
-  70% {
-    opacity: 1;
-  }
-  100% {
+@keyframes tk-pill-out {
+  to {
+    transform: scale(0.96);
     opacity: 0;
   }
 }
 
-@keyframes tk-tv-flash-on {
-  /* Bright only as the dot and the line; dark before the capsule opens up
-     (the CSS starts a frame or two after the native animation). */
-  0%,
-  18% {
-    opacity: 1;
-  }
-  38%,
-  100% {
+@keyframes tk-pill-in {
+  from {
+    transform: scale(0.96);
     opacity: 0;
   }
 }
 
-@keyframes tk-tv-off {
-  0% {
-    transform: scale(1, 1);
-    opacity: 1;
-  }
-  30% {
-    transform: scale(1, 0.03);
-  }
-  70% {
-    transform: scale(0.04, 0.03);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0, 0);
-    opacity: 0;
-  }
+/* The voice: a vertical stack of thin bars that widen with the sound. */
+.tk-voice {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 9px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
 }
 
-@keyframes tk-tv-on {
-  0% {
-    transform: scale(0, 0);
-    opacity: 0;
-  }
-  25% {
-    transform: scale(0.04, 0.03);
-    opacity: 1;
-  }
-  55% {
-    transform: scale(1, 0.03);
-  }
-  100% {
-    transform: scale(1, 1);
-    opacity: 1;
-  }
+.tk-voice[data-on] {
+  opacity: 1;
+}
+
+.tk-voice > span {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.85);
+  transition: width 90ms linear;
 }
 
 /* Reduce Motion: no shape changes — a plain, quick fade. */
 @media (prefers-reduced-motion: reduce) {
-  .tk-pill-hit[data-anim="leave"],
   .tk-pill-hit:not([data-native])[data-anim="leave"] {
-    animation: tk-fade-out 200ms ease forwards;
+    animation: tk-fade-out 160ms ease forwards;
   }
-  .tk-pill-hit[data-anim="enter"],
   .tk-pill-hit:not([data-native])[data-anim="enter"] {
-    animation: tk-fade-in 200ms ease both;
+    animation: tk-fade-in 180ms ease both;
   }
-  .tk-pill-hit::after {
-    animation: none !important;
+  .tk-voice > span {
+    transition: none;
   }
 }
 

@@ -12,6 +12,9 @@ type Anim = "enter" | "leave" | "gone" | null;
 const DRAG_THRESHOLD = 3;
 /** While recording the capsule is full of burgundy glass. */
 const RECORDING_FILL = 100;
+/** Bars in the voice meter (the engine sends 16 frequency bands). */
+const BARS = 9;
+const QUIET: number[] = Array(BARS).fill(0);
 
 /**
  * The floating pill window. Fills with burgundy glass while recording and
@@ -22,6 +25,8 @@ const RECORDING_FILL = 100;
 const PillWindow = () => {
   const [state, setState] = useState<PillState>("idle");
   const [anim, setAnim] = useState<Anim>(null);
+  const [voice, setVoice] = useState<number[]>(QUIET);
+  const smooth = useRef<number[]>([...QUIET]);
   // On macOS 26+ the capsule is Apple's own Liquid Glass (a native view under
   // this webview); the CSS imitation of glass is then switched off.
   const [nativeGlass, setNativeGlass] = useState(false);
@@ -43,7 +48,31 @@ const PillWindow = () => {
       .then((s) => setState(s as PillState))
       .catch(() => {});
     const subs = [
-      listen<PillState>("tk-pill-state", (e) => setState(e.payload)),
+      listen<PillState>("tk-pill-state", (e) => {
+        setState(e.payload);
+        if (e.payload !== "recording") {
+          smooth.current = [...QUIET];
+          setVoice(QUIET);
+        }
+      }),
+      listen<number[]>("tk-pill-levels", (e) => {
+        const bands = e.payload;
+        const next = smooth.current.map((prev, i) => {
+          // Average the bands that fall into this bar, then boost a little.
+          const from = Math.floor((i * bands.length) / BARS);
+          const to = Math.max(
+            from + 1,
+            Math.floor(((i + 1) * bands.length) / BARS),
+          );
+          let sum = 0;
+          for (let b = from; b < to; b++) sum += bands[b] ?? 0;
+          const v = Math.min(1, (sum / (to - from)) * 1.7);
+          // Open fast, settle slowly: calm in pauses, alive while talking.
+          return v > prev ? v : prev * 0.8 + v * 0.2;
+        });
+        smooth.current = next;
+        setVoice(next);
+      }),
       listen<boolean>("tk-pill-visible", (e) => {
         if (!e.payload) {
           setAnim("leave");
@@ -137,7 +166,13 @@ const PillWindow = () => {
           fill={recording ? RECORDING_FILL : 0}
           transitionMs={recording ? 450 : 420}
           className={`tk-pill-live${nativeGlass ? " tk-pill-native" : ""}`}
-        />
+        >
+          <div className="tk-voice" data-on={recording ? "" : undefined}>
+            {voice.map((v, i) => (
+              <span key={i} style={{ width: `${3 + Math.round(v * 22)}px` }} />
+            ))}
+          </div>
+        </Pill>
       </div>
     </div>
   );

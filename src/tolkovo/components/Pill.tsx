@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { MicIcon } from "./icons";
 
 interface PillProps {
@@ -10,6 +10,8 @@ interface PillProps {
   transitionMs?: number;
   className?: string;
   style?: CSSProperties;
+  /** Drawn inside the capsule, over the fill (e.g. the voice meter). */
+  children?: ReactNode;
 }
 
 /**
@@ -24,6 +26,7 @@ export const Pill = ({
   transitionMs = 450,
   className = "",
   style,
+  children,
 }: PillProps) => {
   // Mic size and bottom offset scale with the pill (64×140 → 23px, 15px).
   const micSize = Math.round(width * 0.36);
@@ -43,6 +46,7 @@ export const Pill = ({
           transitionDuration: `${transitionMs}ms`,
         }}
       />
+      {children}
       <div className="tk-pill-mic" style={{ bottom: micBottom }}>
         <MicIcon size={micSize} />
       </div>
