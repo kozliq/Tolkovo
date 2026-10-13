@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!-- Tolkovo app icon source. Render to PNG (1024) and run `bun tauri icon`.
-       The pill on Liquid Glass with the burgundy lava-lamp gel inside —
-       the same materials as the on-screen pill. -->
+       The pill on Liquid Glass filled with burgundy glass from the bottom —
+       the same look as the on-screen pill while recording. -->
   <defs>
     <!-- macOS icon grid: 824×824 body inside a 1024 canvas. -->
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -26,27 +26,24 @@
       <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
       <stop offset="0.12" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
-    <radialGradient id="gelBody" cx="0.4" cy="0.3" r="0.8">
-      <stop offset="0" stop-color="#d0465f"/>
-      <stop offset="0.55" stop-color="#9a2440"/>
+    <linearGradient id="fillBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c83e58"/>
+      <stop offset="0.45" stop-color="#8e2138"/>
       <stop offset="1" stop-color="#5b1426"/>
-    </radialGradient>
+    </linearGradient>
+    <linearGradient id="fillSides" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#14000a" stop-opacity="0.35"/>
+      <stop offset="0.3" stop-color="#14000a" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#14000a" stop-opacity="0"/>
+      <stop offset="1" stop-color="#14000a" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="fillSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb3c3" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffb3c3" stop-opacity="0"/>
+    </linearGradient>
     <clipPath id="capsuleClip">
       <rect x="362" y="200" width="300" height="624" rx="150"/>
     </clipPath>
-    <!-- Goo: merge the balls into one drop; then light it for the gel shine. -->
-    <filter id="goo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="24" result="blur"/>
-      <feColorMatrix in="blur" mode="matrix"
-        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="goo"/>
-      <feGaussianBlur in="goo" stdDeviation="14" result="soft"/>
-      <feSpecularLighting in="soft" surfaceScale="40" specularConstant="1.0"
-        specularExponent="28" lighting-color="#ffd6de" result="spec">
-        <fePointLight x="420" y="120" z="520"/>
-      </feSpecularLighting>
-      <feComposite in="spec" in2="goo" operator="in" result="shine"/>
-      <feComposite in="goo" in2="shine" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0"/>
-    </filter>
     <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="22"/>
     </filter>
@@ -63,19 +60,15 @@
   <!-- Glass capsule -->
   <rect x="362" y="200" width="300" height="624" rx="150" fill="url(#glassFill)"/>
 
-  <!-- Gel, clipped to the inside of the capsule -->
+  <!-- Burgundy glass filling the capsule from the bottom -->
   <g clip-path="url(#capsuleClip)">
-    <g filter="url(#goo)" fill="url(#gelBody)">
-      <circle cx="512" cy="735" r="128"/>
-      <circle cx="478" cy="610" r="104"/>
-      <circle cx="548" cy="520" r="86"/>
-      <circle cx="502" cy="458" r="58"/>
-      <!-- a drop rising on its own, the lava-lamp signature -->
-      <circle cx="536" cy="296" r="40"/>
-    </g>
+    <rect x="362" y="430" width="300" height="394" fill="url(#fillBody)"/>
+    <rect x="362" y="430" width="300" height="394" fill="url(#fillSides)"/>
+    <rect x="362" y="430" width="300" height="5" fill="#ffd2dc" opacity="0.75"/>
+    <rect x="362" y="435" width="300" height="70" fill="url(#fillSheen)"/>
   </g>
 
-  <!-- Glass rim and highlight on top of the gel -->
+  <!-- Glass rim and highlight on top -->
   <rect x="364" y="202" width="296" height="620" rx="148" fill="none" stroke="url(#rim)" stroke-width="5"/>
   <path d="M 410 300 Q 412 248 470 232" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
 
