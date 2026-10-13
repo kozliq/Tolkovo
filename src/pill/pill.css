@@ -19,7 +19,8 @@
 /*
  * Switching on and off like an old CRT TV, fast. With Apple's Liquid Glass
  * the collapse itself is done natively (pill.rs, play_tv) so the glass and
- * the gel shrink together; the webview only adds the bright scan-line flash.
+ * the fill shrink together; the webview only adds a bright flash when the
+ * pill switches on (switching off has no flash).
  * Without native glass (macOS < 26) CSS does the whole effect.
  */
 .tk-pill-hit {
@@ -34,10 +35,6 @@
   background: #ffffff;
   opacity: 0;
   pointer-events: none;
-}
-
-.tk-pill-hit[data-anim="leave"]::after {
-  animation: tk-tv-flash-off 300ms linear forwards;
 }
 
 .tk-pill-hit[data-anim="enter"]::after {
@@ -55,21 +52,6 @@
 
 .tk-pill-hit:not([data-native])[data-anim="enter"] {
   animation: tk-tv-on 360ms linear both;
-}
-
-@keyframes tk-tv-flash-off {
-  /* Dark while the capsule squashes; bright only as a line and a dot. */
-  0%,
-  24% {
-    opacity: 0;
-  }
-  32%,
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
 }
 
 @keyframes tk-tv-flash-on {
