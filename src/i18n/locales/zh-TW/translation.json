@@ -784,7 +784,16 @@
         "starter": "Tolkovo also fixes {{count}} common words on its own: GitHub, ChatGPT, Zoom and more."
       },
       "advancedLink": "Advanced",
-      "about": "Tolkovo {{version}} · free forever"
+      "about": "Tolkovo {{version}} · free forever",
+      "period": {
+        "title": "Period at the end",
+        "hint": "Chats read livelier without it"
+      },
+      "copy": {
+        "title": "Copy to clipboard",
+        "hint": "The text stays on the clipboard after pasting"
+      },
+      "statsLink": "Stats"
     },
     "advanced": {
       "title": "Advanced",
@@ -814,6 +823,72 @@
         "title": "Data folder",
         "open": "Open"
       }
+    },
+    "stats": {
+      "title": "Stats",
+      "period": "Period",
+      "periods": {
+        "today": "Today",
+        "week": "Week",
+        "month": "Month",
+        "all": "All time"
+      },
+      "words_one": "word",
+      "words_other": "words",
+      "dictations_one": "dictation",
+      "dictations_other": "dictations",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "wordsN_one": "{{n}} word",
+      "wordsN_other": "{{n}} words",
+      "timesN_one": "{{n}} time",
+      "timesN_other": "{{n}} times",
+      "saved": "saved",
+      "streak": "in a row with Tolkovo",
+      "longest": "longest dictation",
+      "topDay": "chattiest day — {{day}}",
+      "topDayEmpty": "chattiest day",
+      "fillers": "Filler words",
+      "fillersHint": "How many times you said",
+      "ai": "Prompts to AI",
+      "topWords": "Frequent words",
+      "enabled": "Count stats",
+      "private": "Numbers only, on this Mac only. Dictated text is not stored.",
+      "formula": "Saved = words ÷ 40 per minute (typing) − words ÷ 130 per minute (speech)",
+      "reset": "Reset stats",
+      "open": "Stats",
+      "resetAction": "Reset…",
+      "resetConfirm": "Reset for sure?",
+      "fillersEmpty": "None yet — clean speech.",
+      "aiEmpty": "Dictations into ChatGPT, Claude, Cursor and similar apps will show here.",
+      "topWordsEmpty": "Shows up after your first dictations.",
+      "words_few": "words",
+      "words_many": "words",
+      "dictations_few": "dictations",
+      "dictations_many": "dictations",
+      "days_few": "{{count}} days",
+      "days_many": "{{count}} days",
+      "wordsN_few": "{{n}} words",
+      "wordsN_many": "{{n}} words",
+      "timesN_few": "{{n}} times",
+      "timesN_many": "{{n}} times"
+    },
+    "recap": {
+      "heading": "Your {{month}} in Tolkovo",
+      "title": "Recap of {{month}}",
+      "lead": "A 1080×1920 picture, sized for stories. Nobody sees it unless you share it.",
+      "save": "Save picture",
+      "copy": "Copy",
+      "saved": "Saved",
+      "ai": "Prompts to AI",
+      "filler": "Said “{{word}}”",
+      "topWord": "Favourite word",
+      "streak": "Streak",
+      "empty": "The recap appears on the 1st, once your first month with Tolkovo is over.",
+      "fileName": "Tolkovo — recap of {{month}} {{year}}",
+      "savedTo": "Saved to Downloads.",
+      "copied": "Copied — paste it into a story or chat.",
+      "failed": "Didn't work. Try again."
     }
   }
 }

@@ -3,7 +3,7 @@ import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 /** Window sizes from the mockups (logical points). */
 export const WINDOW_SIZE = {
   onboarding: { width: 620, height: 500 },
-  settings: { width: 640, height: 600 },
+  settings: { width: 640, height: 680 },
 } as const;
 
 export const resizeWindow = async (kind: keyof typeof WINDOW_SIZE) => {

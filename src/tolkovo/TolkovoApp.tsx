@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Toaster } from "sonner";
 import { useTranslation } from "react-i18next";
 import { platform } from "@tauri-apps/plugin-os";
+import { listen } from "@tauri-apps/api/event";
 import {
   checkAccessibilityPermission,
   checkMicrophonePermission,
@@ -13,6 +14,8 @@ import { Download } from "./onboarding/Download";
 import { Ready } from "./onboarding/Ready";
 import { Settings } from "./settings/Settings";
 import { Advanced } from "./settings/Advanced";
+import { StatsScreen } from "./stats/StatsScreen";
+import { RecapScreen } from "./stats/RecapScreen";
 import { useErrorToasts } from "./useErrorToasts";
 import { closeWindow, resizeWindow } from "./window";
 import "./tolkovo.css";
@@ -23,7 +26,12 @@ type Stage =
   | "download"
   | "ready"
   | "settings"
-  | "advanced";
+  | "advanced"
+  | "stats"
+  | "recap";
+
+/** Screens of the regular (after first run) window. */
+const WINDOW_SCREENS: Stage[] = ["settings", "advanced", "stats", "recap"];
 
 const hasPermissions = async (): Promise<boolean> => {
   if (platform() !== "macos") return true;
@@ -93,10 +101,21 @@ export const TolkovoApp = () => {
 
   useEffect(() => {
     if (stage === "loading") return;
-    resizeWindow(
-      stage === "settings" || stage === "advanced" ? "settings" : "onboarding",
-    );
+    resizeWindow(WINDOW_SCREENS.includes(stage) ? "settings" : "onboarding");
   }, [stage]);
+
+  // Menu bar → Настройки / Статистика / Итоги: switch screens, but never
+  // interrupt the first run.
+  useEffect(() => {
+    const off = listen<string>("tk-open", ({ payload }) => {
+      const next = payload as Stage;
+      if (!WINDOW_SCREENS.includes(next)) return;
+      setStage((cur) => (WINDOW_SCREENS.includes(cur) ? next : cur));
+    });
+    return () => {
+      off.then((f) => f());
+    };
+  }, []);
 
   const afterWelcome = () => {
     startEngine();
@@ -128,9 +147,18 @@ export const TolkovoApp = () => {
     );
   else if (stage === "ready") content = <Ready onFinish={finish} />;
   else if (stage === "settings")
-    content = <Settings onAdvanced={() => setStage("advanced")} />;
+    content = (
+      <Settings
+        onAdvanced={() => setStage("advanced")}
+        onStats={() => setStage("stats")}
+      />
+    );
   else if (stage === "advanced")
     content = <Advanced onBack={() => setStage("settings")} />;
+  else if (stage === "stats")
+    content = <StatsScreen onBack={() => setStage("settings")} />;
+  else if (stage === "recap")
+    content = <RecapScreen onBack={() => setStage("stats")} />;
 
   return (
     <div className="tk-window">

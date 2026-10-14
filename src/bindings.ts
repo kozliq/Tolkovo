@@ -70,6 +70,65 @@ async tolkovoGetPillMode() : Promise<PillMode> {
 async tolkovoSetPillMode(mode: PillMode) : Promise<void> {
     await TAURI_INVOKE("tolkovo_set_pill_mode", { mode });
 },
+async tolkovoStatsSummary(period: StatsPeriod) : Promise<StatsSummary> {
+    return await TAURI_INVOKE("tolkovo_stats_summary", { period });
+},
+/**
+ * Last month's recap; opening it marks it as seen (the menu item calms down).
+ */
+async tolkovoStatsRecap() : Promise<MonthRecap | null> {
+    return await TAURI_INVOKE("tolkovo_stats_recap");
+},
+async tolkovoStatsGetEnabled() : Promise<boolean> {
+    return await TAURI_INVOKE("tolkovo_stats_get_enabled");
+},
+async tolkovoStatsSetEnabled(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tolkovo_stats_set_enabled", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Forget every counter. History is not touched.
+ */
+async tolkovoStatsReset() : Promise<void> {
+    await TAURI_INVOKE("tolkovo_stats_reset");
+},
+/**
+ * Save the recap picture to Downloads and show it in Finder.
+ */
+async tolkovoSavePng(name: string, bytes: number[]) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tolkovo_save_png", { name, bytes }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Put the recap picture on the clipboard.
+ */
+async tolkovoCopyPng(bytes: number[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tolkovo_copy_png", { bytes }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async tolkovoGetTrailingPeriod() : Promise<boolean> {
+    return await TAURI_INVOKE("tolkovo_get_trailing_period");
+},
+async tolkovoSetTrailingPeriod(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tolkovo_set_trailing_period", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async changeBinding(id: string, binding: string) : Promise<Result<BindingResponse, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("change_binding", { id, binding }) };
@@ -1075,6 +1134,7 @@ export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
 export type AvailableAccelerators = { transcribe: string[]; ort: string[]; gpu_devices: GpuDeviceOption[] }
 export type BindingResponse = { success: boolean; binding: ShortcutBinding | null; error: string | null }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
+export type Counted = { name: string; count: number }
 export type CustomSounds = { start: boolean; stop: boolean }
 export type EngineType = 
 /**
@@ -1129,6 +1189,7 @@ sha256: string | null } } |
  */
 "Local"
 export type ModelUnloadTimeout = "never" | "immediately" | "min_2" | "min_5" | "min_10" | "min_15" | "hour_1" | "sec_15"
+export type MonthRecap = { year: number; month: number; summary: StatsSummary }
 export type OrtAcceleratorSetting = "auto" | "cpu" | "cuda" | "directml" | "rocm"
 export type OverlayPosition = "top" | "bottom"
 /**
@@ -1212,6 +1273,8 @@ export type ShortcutActivation =
 "hold_or_toggle"
 export type ShortcutBinding = { id: string; name: string; description: string; default_binding: string; current_binding: string }
 export type SoundTheme = "marimba" | "pop" | "custom"
+export type StatsPeriod = "today" | "week" | "month" | "all"
+export type StatsSummary = { words: number; dictations: number; streak_days: number; longest_dictation_words: number; top_day: TopDay | null; fillers: Counted[]; ai_prompts: number; ai_apps: Counted[]; top_words: Counted[] }
 /**
  * Phase of the streaming overlay card, emitted to drive its UI state.
  */
@@ -1249,6 +1312,7 @@ export type StreamWorkKind = "transcribing" | "polishing"
  * and `Dark` force one of the two palettes Handy already ships.
  */
 export type Theme = "system" | "light" | "dark"
+export type TopDay = { date: string; words: number }
 export type TranscribeAcceleratorSetting = "auto" | "cpu" | "gpu"
 export type TypingTool = "auto" | "wtype" | "kwtype" | "dotool" | "ydotool" | "xdotool"
 export type VadBackend = "silero" | "earshot"

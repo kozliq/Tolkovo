@@ -440,8 +440,8 @@ pub(crate) async fn process_transcription_output(
         final_text = converted_text;
     }
 
-    // Tolkovo: personal dictionary ("гитхаб" → "GitHub").
-    final_text = crate::tolkovo::dictionary::apply(app, &final_text);
+    // Tolkovo: personal dictionary ("гитхаб" → "GitHub") and the final period.
+    final_text = crate::tolkovo::polish(app, &final_text);
 
     // Tolkovo: text never leaves the Mac, so the --toggle-post-process flag
     // must not reach an LLM provider while post-processing is off.
@@ -828,6 +828,8 @@ impl ShortcutAction for TranscribeAction {
                                         return;
                                     }
 
+                                    // Tolkovo: count words, fillers, the target app.
+                                    crate::tolkovo::stats::record(&ah_clone, &final_text);
                                     match utils::paste(final_text, ah_clone.clone()) {
                                         Ok(()) => debug!(
                                             "Text pasted successfully in {:?}",

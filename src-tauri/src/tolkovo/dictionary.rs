@@ -1,8 +1,8 @@
 //! The personal dictionary: fixes words the Russian model writes in
 //! Cyrillic ("гитхаб" → "GitHub", "пул реквест" → "pull request").
 //!
-//! Applied to the recognized text right before it is pasted (one hook in
-//! `actions::process_transcription_output`). A starter set of common
+//! Applied to the recognized text right before it is pasted, through
+//! `tolkovo::polish` (one hook in `actions::process_transcription_output`). A starter set of common
 //! anglicisms ships in `dictionary_starter.json`; the user's own rules live in
 //! `tolkovo.json` and win over the starter set.
 //!

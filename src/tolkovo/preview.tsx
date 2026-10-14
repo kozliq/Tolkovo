@@ -1,7 +1,7 @@
 // Dev-only preview of Tolkovo screens in a plain browser, next to the design
 // mockups. Tauri IPC is mocked; not part of the production build.
 // Usage: http://localhost:1420/src/tolkovo/preview.html#welcome
-//        (#welcome, #download=62, #ready, #settings, #pill=0|100)
+//        (#welcome, #download=62, #ready, #settings, #stats, #recap, #pill=0|100)
 import { mockIPC, mockWindows } from "@tauri-apps/api/mocks";
 
 (window as unknown as Record<string, unknown>).__TAURI_OS_PLUGIN_INTERNALS__ = {
@@ -34,6 +34,7 @@ mockIPC((cmd) => {
     ];
   if (cmd === "tolkovo_dictionary_starter_count") return 191;
   if (cmd === "plugin:app|version") return "0.1.0";
+  if (cmd === "tolkovo_get_trailing_period") return true;
   if (cmd === "get_available_models") return [];
   return null;
 });
@@ -105,8 +106,9 @@ const backdrop: React.CSSProperties = {
   justifyContent: "center",
   overflow: "hidden",
 };
-const size =
-  screen === "settings" || screen === "advanced" ? [640, 600] : [620, 500];
+const size = ["settings", "advanced", "stats", "recap"].includes(screen)
+  ? [640, 680]
+  : [620, 500];
 
 const Frame = ({ children }: { children: React.ReactNode }) => (
   <div style={backdrop}>
@@ -149,8 +151,66 @@ if (screen === "advanced") {
   } as never);
 }
 
+const { Stats } = await import("./stats/Stats");
+const { MonthRecapPage } = await import("./stats/MonthRecapPage");
+// Sample numbers for the mockups (a busy month).
+const sample = {
+  words: 48213,
+  dictations: 1284,
+  streak_days: 12,
+  longest_dictation_words: 412,
+  top_day: { date: "2026-09-17", words: 3120 },
+  fillers: [
+    { name: "короче", count: 314 },
+    { name: "типа", count: 122 },
+    { name: "ну", count: 97 },
+    { name: "в общем", count: 41 },
+    { name: "блин", count: 23 },
+  ],
+  ai_prompts: 326,
+  ai_apps: [
+    { name: "ChatGPT", count: 171 },
+    { name: "Claude", count: 118 },
+    { name: "Cursor", count: 37 },
+  ],
+  top_words: [
+    { name: "давай", count: 402 },
+    { name: "сделать", count: 288 },
+    { name: "проект", count: 191 },
+    { name: "сегодня", count: 160 },
+    { name: "клиент", count: 133 },
+    { name: "кнопка", count: 98 },
+  ],
+};
+const StatsPreview = () => {
+  const [period, setPeriod] = React.useState<
+    "today" | "week" | "month" | "all"
+  >("month");
+  return (
+    <Stats
+      period={period}
+      onPeriod={setPeriod}
+      stats={sample}
+      enabled
+      onEnabled={noop}
+      resetArmed={false}
+      onReset={noop}
+      onBack={noop}
+    />
+  );
+};
+
 const content =
-  screen === "download" ? (
+  screen === "stats" ? (
+    <StatsPreview />
+  ) : screen === "recap" ? (
+    <MonthRecapPage
+      recap={{ summary: sample, year: 2026, month: 9 }}
+      onSave={noop}
+      onCopy={noop}
+      onBack={noop}
+    />
+  ) : screen === "download" ? (
     <Download onDone={noop} />
   ) : screen === "ready" ? (
     <Ready onFinish={noop} />

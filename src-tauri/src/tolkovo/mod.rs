@@ -8,8 +8,10 @@
 pub mod dictionary;
 pub mod menu;
 pub mod pill;
+pub mod stats;
 
 use tauri::AppHandle;
+use tauri_plugin_store::StoreExt;
 
 use crate::settings::{self, OverlayStyle};
 
@@ -108,4 +110,72 @@ pub fn focus_without_dock(app: &AppHandle) {
 #[specta::specta]
 pub fn tolkovo_onboarding_finished(app: AppHandle) {
     pill::refresh_visibility(&app);
+}
+
+// ---------- Output polish ----------
+
+const STORE_PATH: &str = "tolkovo.json";
+const KEY_TRAILING_PERIOD: &str = "trailing_period";
+
+/// Whether the dictation keeps its final period ("Точка в конце"). On by
+/// default; chats often read better without it.
+fn trailing_period(app: &AppHandle) -> bool {
+    app.store(crate::portable::store_path(STORE_PATH))
+        .ok()
+        .and_then(|s| s.get(KEY_TRAILING_PERIOD))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(true)
+}
+
+/// Drop one final period. "...", "…", "?" and "!" stay; trailing spaces
+/// (Handy's "append trailing space") are kept after the cut.
+fn without_final_period(text: &str) -> String {
+    let body = text.trim_end();
+    let tail = &text[body.len()..];
+    match body.strip_suffix('.') {
+        Some(rest) if !rest.ends_with('.') => format!("{rest}{tail}"),
+        _ => text.to_string(),
+    }
+}
+
+/// Everything Tolkovo does to the recognized text before it is pasted:
+/// the personal dictionary, then the final period.
+pub fn polish(app: &AppHandle, text: &str) -> String {
+    let text = dictionary::apply(app, text);
+    if trailing_period(app) {
+        text
+    } else {
+        without_final_period(&text)
+    }
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn tolkovo_get_trailing_period(app: AppHandle) -> bool {
+    trailing_period(&app)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn tolkovo_set_trailing_period(app: AppHandle, enabled: bool) -> Result<(), String> {
+    app.store(crate::portable::store_path(STORE_PATH))
+        .map_err(|e| e.to_string())?
+        .set(KEY_TRAILING_PERIOD, serde_json::json!(enabled));
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::without_final_period as cut;
+
+    #[test]
+    fn drops_only_one_final_period() {
+        assert_eq!(cut("Привет, как дела."), "Привет, как дела");
+        assert_eq!(cut("Ок. Понял. "), "Ок. Понял ");
+        assert_eq!(cut("Ну и ну..."), "Ну и ну...");
+        assert_eq!(cut("Правда?"), "Правда?");
+        assert_eq!(cut("Ура!"), "Ура!");
+        assert_eq!(cut("Ждём…"), "Ждём…");
+        assert_eq!(cut(""), "");
+    }
 }

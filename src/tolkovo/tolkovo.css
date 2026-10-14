@@ -648,3 +648,171 @@
 .tk-dict-note {
   margin-top: -8px;
 }
+
+/* ---------- Stats ---------- */
+
+.tk-hero {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+}
+
+.tk-hero-main {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.tk-big {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-big-unit {
+  font-size: 18px;
+  color: var(--tk-text-2);
+}
+
+.tk-hero-side {
+  display: flex;
+  gap: 26px;
+  text-align: right;
+}
+
+.tk-mid {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-label {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--tk-text-2);
+}
+
+.tk-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tk-tile {
+  padding: 14px 16px;
+}
+
+.tk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: -6px;
+}
+
+.tk-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 13px;
+  border-radius: 16px;
+  background: var(--tk-group);
+  border: 1px solid var(--tk-group-border);
+  font-size: 14px;
+}
+
+.tk-chip > b {
+  font-weight: 600;
+  color: #e0566e;
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-bars {
+  gap: 10px;
+  padding: 14px 20px;
+  margin-top: -6px;
+}
+
+.tk-bar-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.tk-bar-name {
+  color: var(--tk-text);
+}
+
+.tk-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.tk-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8e2138, #c23a52);
+}
+
+.tk-bar-n {
+  text-align: right;
+  color: var(--tk-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Month recap: card left, actions right */
+.tk-recap {
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+  padding: 44px 36px 32px;
+  overflow: hidden;
+}
+
+.tk-recap-card {
+  flex-shrink: 0;
+  width: 288px;
+  height: 512px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 86, 110, 0.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.tk-card {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tk-recap-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tk-recap-side .tk-row-hint {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tk-recap-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tk-links {
+  display: flex;
+  gap: 18px;
+}

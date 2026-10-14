@@ -63,6 +63,8 @@ struct MenuInputs {
     downloaded_models: Vec<(String, String)>,
     locale: String,
     update_checks_enabled: bool,
+    /// Tolkovo: last month's recap in the menu, `(month, opened)`.
+    recap: Option<(u32, bool)>,
 }
 
 /// Complete description of what the tray should look like.
@@ -335,6 +337,7 @@ fn compute_desired(app: &AppHandle, icon_state: TrayIconState) -> TrayDesired {
             downloaded_models,
             locale: settings.app_language,
             update_checks_enabled: settings.update_checks_enabled,
+            recap: crate::tolkovo::stats::recap_menu_state(app),
         },
     }
 }
@@ -461,7 +464,7 @@ fn version_label() -> String {
 /// `update_checks_forced_disabled()`, which cannot change during a run.
 fn build_menu(app: &AppHandle, inputs: &MenuInputs) -> tauri::Result<(Menu<tauri::Wry>, String)> {
     if crate::tolkovo::menu::ENABLED {
-        return crate::tolkovo::menu::build(app, inputs.busy);
+        return crate::tolkovo::menu::build(app, inputs.busy, inputs.recap);
     }
     let strings = get_tray_translations(Some(inputs.locale.clone()));
 
@@ -701,6 +704,7 @@ mod tests {
             downloaded_models: vec![("small".to_string(), "Small".to_string())],
             locale: "en".to_string(),
             update_checks_enabled: true,
+            recap: None,
         }
     }
 

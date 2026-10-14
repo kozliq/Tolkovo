@@ -284,7 +284,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     let tray = tray_builder
         .on_menu_event(|app, event| match event.id.as_ref() {
             "settings" => {
-                show_main_window(app);
+                tolkovo::menu::open_screen(app, "settings");
             }
             "secure_input_warning" => {
                 // Full explanation lives in the settings-window banner
@@ -320,7 +320,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
             "quit" => {
                 app.exit(0);
             }
-            tolkovo::menu::ID_DONATE => tolkovo::menu::open_donate(app),
+            id if tolkovo::menu::handle(app, id) => {}
             id if id.starts_with("model_select:") => {
                 let model_id = id.strip_prefix("model_select:").unwrap().to_string();
                 let current_model = settings::get_settings(app).selected_model;
@@ -657,6 +657,15 @@ pub fn run(cli_args: CliArgs) {
             tolkovo::pill::tolkovo_pill_state,
             tolkovo::pill::tolkovo_get_pill_mode,
             tolkovo::pill::tolkovo_set_pill_mode,
+            tolkovo::stats::tolkovo_stats_summary,
+            tolkovo::stats::tolkovo_stats_recap,
+            tolkovo::stats::tolkovo_stats_get_enabled,
+            tolkovo::stats::tolkovo_stats_set_enabled,
+            tolkovo::stats::tolkovo_stats_reset,
+            tolkovo::stats::tolkovo_save_png,
+            tolkovo::stats::tolkovo_copy_png,
+            tolkovo::tolkovo_get_trailing_period,
+            tolkovo::tolkovo_set_trailing_period,
             shortcut::change_binding,
             shortcut::reset_binding,
             shortcut::change_shortcut_activation_setting,

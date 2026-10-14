@@ -9,25 +9,36 @@ import { Dictionary } from "./Dictionary";
 
 interface SettingsProps {
   onAdvanced?: () => void;
+  onStats?: () => void;
 }
 
 /** The one settings window (design/Settings.dc.html). */
-export const Settings = ({ onAdvanced }: SettingsProps) => {
+export const Settings = ({ onAdvanced, onStats }: SettingsProps) => {
   const { t } = useTranslation();
   const { getSetting, updateSetting } = useSettings();
   const [pillMode, setPillMode] = useState<PillMode>("always");
   const [version, setVersion] = useState("");
+  const [period, setPeriod] = useState(true);
 
   useEffect(() => {
     commands
       .tolkovoGetPillMode()
       .then(setPillMode)
       .catch(() => {});
+    commands
+      .tolkovoGetTrailingPeriod()
+      .then(setPeriod)
+      .catch(() => {});
     getVersion()
       // "0.1.0" reads as "0.1", like the mockup.
       .then((v) => setVersion(v.replace(/\.0$/, "")))
       .catch(() => {});
   }, []);
+
+  const changePeriod = (v: boolean) => {
+    setPeriod(v);
+    commands.tolkovoSetTrailingPeriod(v).catch(() => {});
+  };
 
   const changePillMode = (mode: PillMode) => {
     setPillMode(mode);
@@ -68,14 +79,46 @@ export const Settings = ({ onAdvanced }: SettingsProps) => {
             onChange={(v) => updateSetting("autostart_enabled", v)}
           />
         </Row>
+        <div className="tk-divider tk-divider-row" />
+        <Row
+          title={t("tolkovo.settings.period.title")}
+          hint={t("tolkovo.settings.period.hint")}
+        >
+          <Switch
+            label={t("tolkovo.settings.period.title")}
+            checked={period}
+            onChange={changePeriod}
+          />
+        </Row>
+        <div className="tk-divider tk-divider-row" />
+        <Row
+          title={t("tolkovo.settings.copy.title")}
+          hint={t("tolkovo.settings.copy.hint")}
+        >
+          <Switch
+            label={t("tolkovo.settings.copy.title")}
+            checked={getSetting("clipboard_handling") === "copy_to_clipboard"}
+            onChange={(v) =>
+              updateSetting(
+                "clipboard_handling",
+                v ? "copy_to_clipboard" : "dont_modify",
+              )
+            }
+          />
+        </Row>
       </div>
 
       <Dictionary />
 
       <div className="tk-page-footer">
-        <button type="button" className="tk-link" onClick={onAdvanced}>
-          {t("tolkovo.settings.advancedLink")}
-        </button>
+        <div className="tk-links">
+          <button type="button" className="tk-link" onClick={onStats}>
+            {t("tolkovo.settings.statsLink")}
+          </button>
+          <button type="button" className="tk-link" onClick={onAdvanced}>
+            {t("tolkovo.settings.advancedLink")}
+          </button>
+        </div>
         <div className="tk-about">
           {t("tolkovo.settings.about", { version })}
         </div>
