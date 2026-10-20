@@ -1,766 +1,766 @@
 [
- {
-  "from": "гитхаб",
-  "to": "GitHub"
- },
- {
-  "from": "гит хаб",
-  "to": "GitHub"
- },
- {
-  "from": "гитлаб",
-  "to": "GitLab"
- },
- {
-  "from": "телега",
-  "to": "Telegram"
- },
- {
-  "from": "телеграм",
-  "to": "Telegram"
- },
- {
-  "from": "телеграмм",
-  "to": "Telegram"
- },
- {
-  "from": "ватсап",
-  "to": "WhatsApp"
- },
- {
-  "from": "вотсап",
-  "to": "WhatsApp"
- },
- {
-  "from": "вацап",
-  "to": "WhatsApp"
- },
- {
-  "from": "вайбер",
-  "to": "Viber"
- },
- {
-  "from": "зум",
-  "to": "Zoom"
- },
- {
-  "from": "скайп",
-  "to": "Skype"
- },
- {
-  "from": "дискорд",
-  "to": "Discord"
- },
- {
-  "from": "слак",
-  "to": "Slack"
- },
- {
-  "from": "слэк",
-  "to": "Slack"
- },
- {
-  "from": "тимс",
-  "to": "Teams"
- },
- {
-  "from": "ноушен",
-  "to": "Notion"
- },
- {
-  "from": "ноушн",
-  "to": "Notion"
- },
- {
-  "from": "фигма",
-  "to": "Figma"
- },
- {
-  "from": "трелло",
-  "to": "Trello"
- },
- {
-  "from": "джира",
-  "to": "Jira"
- },
- {
-  "from": "конфлюенс",
-  "to": "Confluence"
- },
- {
-  "from": "обсидиан",
-  "to": "Obsidian"
- },
- {
-  "from": "гугл",
-  "to": "Google"
- },
- {
-  "from": "гугл доки",
-  "to": "Google Docs"
- },
- {
-  "from": "гугл докс",
-  "to": "Google Docs"
- },
- {
-  "from": "гугл таблицы",
-  "to": "Google Sheets"
- },
- {
-  "from": "гугл шитс",
-  "to": "Google Sheets"
- },
- {
-  "from": "гугл драйв",
-  "to": "Google Drive"
- },
- {
-  "from": "гмейл",
-  "to": "Gmail"
- },
- {
-  "from": "джимейл",
-  "to": "Gmail"
- },
- {
-  "from": "ютуб",
-  "to": "YouTube"
- },
- {
-  "from": "ютьюб",
-  "to": "YouTube"
- },
- {
-  "from": "инстаграм",
-  "to": "Instagram"
- },
- {
-  "from": "инста",
-  "to": "Instagram"
- },
- {
-  "from": "тикток",
-  "to": "TikTok"
- },
- {
-  "from": "твиттер",
-  "to": "Twitter"
- },
- {
-  "from": "линкедин",
-  "to": "LinkedIn"
- },
- {
-  "from": "реддит",
-  "to": "Reddit"
- },
- {
-  "from": "пинтерест",
-  "to": "Pinterest"
- },
- {
-  "from": "спотифай",
-  "to": "Spotify"
- },
- {
-  "from": "нетфликс",
-  "to": "Netflix"
- },
- {
-  "from": "амазон",
-  "to": "Amazon"
- },
- {
-  "from": "эппл",
-  "to": "Apple"
- },
- {
-  "from": "эпл",
-  "to": "Apple"
- },
- {
-  "from": "айфон",
-  "to": "iPhone"
- },
- {
-  "from": "айпад",
-  "to": "iPad"
- },
- {
-  "from": "макбук",
-  "to": "MacBook"
- },
- {
-  "from": "мак ос",
-  "to": "macOS"
- },
- {
-  "from": "макос",
-  "to": "macOS"
- },
- {
-  "from": "аймак",
-  "to": "iMac"
- },
- {
-  "from": "эйрподс",
-  "to": "AirPods"
- },
- {
-  "from": "аирподс",
-  "to": "AirPods"
- },
- {
-  "from": "эпл вотч",
-  "to": "Apple Watch"
- },
- {
-  "from": "эппл вотч",
-  "to": "Apple Watch"
- },
- {
-  "from": "виндовс",
-  "to": "Windows"
- },
- {
-  "from": "линукс",
-  "to": "Linux"
- },
- {
-  "from": "андроид",
-  "to": "Android"
- },
- {
-  "from": "майкрософт",
-  "to": "Microsoft"
- },
- {
-  "from": "ворд",
-  "to": "Word"
- },
- {
-  "from": "эксель",
-  "to": "Excel"
- },
- {
-  "from": "пауэрпоинт",
-  "to": "PowerPoint"
- },
- {
-  "from": "аутлук",
-  "to": "Outlook"
- },
- {
-  "from": "самсунг",
-  "to": "Samsung"
- },
- {
-  "from": "сяоми",
-  "to": "Xiaomi"
- },
- {
-  "from": "чат джипити",
-  "to": "ChatGPT"
- },
- {
-  "from": "чат гпт",
-  "to": "ChatGPT"
- },
- {
-  "from": "чатгпт",
-  "to": "ChatGPT"
- },
- {
-  "from": "джипити",
-  "to": "GPT"
- },
- {
-  "from": "гпт",
-  "to": "GPT"
- },
- {
-  "from": "опен эй ай",
-  "to": "OpenAI"
- },
- {
-  "from": "опенэйай",
-  "to": "OpenAI"
- },
- {
-  "from": "клод",
-  "to": "Claude"
- },
- {
-  "from": "антропик",
-  "to": "Anthropic"
- },
- {
-  "from": "джемини",
-  "to": "Gemini"
- },
- {
-  "from": "гемини",
-  "to": "Gemini"
- },
- {
-  "from": "копайлот",
-  "to": "Copilot"
- },
- {
-  "from": "перплексити",
-  "to": "Perplexity"
- },
- {
-  "from": "мидджорни",
-  "to": "Midjourney"
- },
- {
-  "from": "миджорни",
-  "to": "Midjourney"
- },
- {
-  "from": "дипсик",
-  "to": "DeepSeek"
- },
- {
-  "from": "хагинг фейс",
-  "to": "Hugging Face"
- },
- {
-  "from": "эй ай",
-  "to": "AI"
- },
- {
-  "from": "эл эл эм",
-  "to": "LLM"
- },
- {
-  "from": "промт",
-  "to": "промпт"
- },
- {
-  "from": "пул реквест",
-  "to": "pull request"
- },
- {
-  "from": "пулл реквест",
-  "to": "pull request"
- },
- {
-  "from": "мерж реквест",
-  "to": "merge request"
- },
- {
-  "from": "коммит",
-  "to": "commit"
- },
- {
-  "from": "мерж",
-  "to": "merge"
- },
- {
-  "from": "мёрж",
-  "to": "merge"
- },
- {
-  "from": "ребейз",
-  "to": "rebase"
- },
- {
-  "from": "бранч",
-  "to": "branch"
- },
- {
-  "from": "деплой",
-  "to": "deploy"
- },
- {
-  "from": "билд",
-  "to": "build"
- },
- {
-  "from": "дебаг",
-  "to": "debug"
- },
- {
-  "from": "фикс",
-  "to": "fix"
- },
- {
-  "from": "хотфикс",
-  "to": "hotfix"
- },
- {
-  "from": "апи",
-  "to": "API"
- },
- {
-  "from": "эйпиай",
-  "to": "API"
- },
- {
-  "from": "рест апи",
-  "to": "REST API"
- },
- {
-  "from": "джейсон",
-  "to": "JSON"
- },
- {
-  "from": "ямл",
-  "to": "YAML"
- },
- {
-  "from": "эс кью эль",
-  "to": "SQL"
- },
- {
-  "from": "эскьюэль",
-  "to": "SQL"
- },
- {
-  "from": "постгрес",
-  "to": "Postgres"
- },
- {
-  "from": "постгрескьюэль",
-  "to": "PostgreSQL"
- },
- {
-  "from": "майэскьюэль",
-  "to": "MySQL"
- },
- {
-  "from": "монго",
-  "to": "MongoDB"
- },
- {
-  "from": "редис",
-  "to": "Redis"
- },
- {
-  "from": "кафка",
-  "to": "Kafka"
- },
- {
-  "from": "докер",
-  "to": "Docker"
- },
- {
-  "from": "кубернетес",
-  "to": "Kubernetes"
- },
- {
-  "from": "кубер",
-  "to": "Kubernetes"
- },
- {
-  "from": "дженкинс",
-  "to": "Jenkins"
- },
- {
-  "from": "терраформ",
-  "to": "Terraform"
- },
- {
-  "from": "энджинкс",
-  "to": "nginx"
- },
- {
-  "from": "эй дабл ю эс",
-  "to": "AWS"
- },
- {
-  "from": "ажур",
-  "to": "Azure"
- },
- {
-  "from": "верцел",
-  "to": "Vercel"
- },
- {
-  "from": "нетлифай",
-  "to": "Netlify"
- },
- {
-  "from": "клаудфлер",
-  "to": "Cloudflare"
- },
- {
-  "from": "фронтенд",
-  "to": "frontend"
- },
- {
-  "from": "фронт энд",
-  "to": "frontend"
- },
- {
-  "from": "бэкенд",
-  "to": "backend"
- },
- {
-  "from": "бэк энд",
-  "to": "backend"
- },
- {
-  "from": "фулстек",
-  "to": "fullstack"
- },
- {
-  "from": "девопс",
-  "to": "DevOps"
- },
- {
-  "from": "эс ди кей",
-  "to": "SDK"
- },
- {
-  "from": "ай ди и",
-  "to": "IDE"
- },
- {
-  "from": "вс код",
-  "to": "VS Code"
- },
- {
-  "from": "ви эс код",
-  "to": "VS Code"
- },
- {
-  "from": "иксикод",
-  "to": "Xcode"
- },
- {
-  "from": "джаваскрипт",
-  "to": "JavaScript"
- },
- {
-  "from": "тайпскрипт",
-  "to": "TypeScript"
- },
- {
-  "from": "пайтон",
-  "to": "Python"
- },
- {
-  "from": "джава",
-  "to": "Java"
- },
- {
-  "from": "котлин",
-  "to": "Kotlin"
- },
- {
-  "from": "свифт",
-  "to": "Swift"
- },
- {
-  "from": "раст",
-  "to": "Rust"
- },
- {
-  "from": "голанг",
-  "to": "Go"
- },
- {
-  "from": "си шарп",
-  "to": "C#"
- },
- {
-  "from": "пи эйч пи",
-  "to": "PHP"
- },
- {
-  "from": "руби",
-  "to": "Ruby"
- },
- {
-  "from": "реакт",
-  "to": "React"
- },
- {
-  "from": "некст джей эс",
-  "to": "Next.js"
- },
- {
-  "from": "вью",
-  "to": "Vue"
- },
- {
-  "from": "ангуляр",
-  "to": "Angular"
- },
- {
-  "from": "ноуд джей эс",
-  "to": "Node.js"
- },
- {
-  "from": "нода",
-  "to": "Node.js"
- },
- {
-  "from": "джанго",
-  "to": "Django"
- },
- {
-  "from": "фласк",
-  "to": "Flask"
- },
- {
-  "from": "тайлвинд",
-  "to": "Tailwind"
- },
- {
-  "from": "таури",
-  "to": "Tauri"
- },
- {
-  "from": "электрон",
-  "to": "Electron"
- },
- {
-  "from": "вебпак",
-  "to": "webpack"
- },
- {
-  "from": "эн пи эм",
-  "to": "npm"
- },
- {
-  "from": "юай",
-  "to": "UI"
- },
- {
-  "from": "ю ай",
-  "to": "UI"
- },
- {
-  "from": "юикс",
-  "to": "UX"
- },
- {
-  "from": "ю экс",
-  "to": "UX"
- },
- {
-  "from": "эм ви пи",
-  "to": "MVP"
- },
- {
-  "from": "эс эй эй эс",
-  "to": "SaaS"
- },
- {
-  "from": "би ту би",
-  "to": "B2B"
- },
- {
-  "from": "би ту си",
-  "to": "B2C"
- },
- {
-  "from": "кей пи ай",
-  "to": "KPI"
- },
- {
-  "from": "оу кей ар",
-  "to": "OKR"
- },
- {
-  "from": "окр",
-  "to": "OKR"
- },
- {
-  "from": "эйчар",
-  "to": "HR"
- },
- {
-  "from": "сиио",
-  "to": "CEO"
- },
- {
-  "from": "си и о",
-  "to": "CEO"
- },
- {
-  "from": "си ти о",
-  "to": "CTO"
- },
- {
-  "from": "пиэм",
-  "to": "PM"
- },
- {
-  "from": "код ревью",
-  "to": "code review"
- },
- {
-  "from": "аппрув",
-  "to": "approve"
- },
- {
-  "from": "фидбек",
-  "to": "фидбэк"
- },
- {
-  "from": "эс эм эс",
-  "to": "SMS"
- },
- {
-  "from": "ю ар эл",
-  "to": "URL"
- },
- {
-  "from": "урл",
-  "to": "URL"
- },
- {
-  "from": "ай пи",
-  "to": "IP"
- },
- {
-  "from": "ви пи эн",
-  "to": "VPN"
- },
- {
-  "from": "вай фай",
-  "to": "Wi-Fi"
- },
- {
-  "from": "вайфай",
-  "to": "Wi-Fi"
- },
- {
-  "from": "блютуз",
-  "to": "Bluetooth"
- },
- {
-  "from": "ю эс би",
-  "to": "USB"
- },
- {
-  "from": "пэ дэ эф",
-  "to": "PDF"
- },
- {
-  "from": "пдф",
-  "to": "PDF"
- },
- {
-  "from": "эм пи три",
-  "to": "MP3"
- },
- {
-  "from": "рилс",
-  "to": "Reels"
- },
- {
-  "from": "шортс",
-  "to": "Shorts"
- },
- {
-  "from": "оке",
-  "to": "окей"
- }
+  {
+    "from": "гитхаб",
+    "to": "GitHub"
+  },
+  {
+    "from": "гит хаб",
+    "to": "GitHub"
+  },
+  {
+    "from": "гитлаб",
+    "to": "GitLab"
+  },
+  {
+    "from": "телега",
+    "to": "Telegram"
+  },
+  {
+    "from": "телеграм",
+    "to": "Telegram"
+  },
+  {
+    "from": "телеграмм",
+    "to": "Telegram"
+  },
+  {
+    "from": "ватсап",
+    "to": "WhatsApp"
+  },
+  {
+    "from": "вотсап",
+    "to": "WhatsApp"
+  },
+  {
+    "from": "вацап",
+    "to": "WhatsApp"
+  },
+  {
+    "from": "вайбер",
+    "to": "Viber"
+  },
+  {
+    "from": "зум",
+    "to": "Zoom"
+  },
+  {
+    "from": "скайп",
+    "to": "Skype"
+  },
+  {
+    "from": "дискорд",
+    "to": "Discord"
+  },
+  {
+    "from": "слак",
+    "to": "Slack"
+  },
+  {
+    "from": "слэк",
+    "to": "Slack"
+  },
+  {
+    "from": "тимс",
+    "to": "Teams"
+  },
+  {
+    "from": "ноушен",
+    "to": "Notion"
+  },
+  {
+    "from": "ноушн",
+    "to": "Notion"
+  },
+  {
+    "from": "фигма",
+    "to": "Figma"
+  },
+  {
+    "from": "трелло",
+    "to": "Trello"
+  },
+  {
+    "from": "джира",
+    "to": "Jira"
+  },
+  {
+    "from": "конфлюенс",
+    "to": "Confluence"
+  },
+  {
+    "from": "обсидиан",
+    "to": "Obsidian"
+  },
+  {
+    "from": "гугл",
+    "to": "Google"
+  },
+  {
+    "from": "гугл доки",
+    "to": "Google Docs"
+  },
+  {
+    "from": "гугл докс",
+    "to": "Google Docs"
+  },
+  {
+    "from": "гугл таблицы",
+    "to": "Google Sheets"
+  },
+  {
+    "from": "гугл шитс",
+    "to": "Google Sheets"
+  },
+  {
+    "from": "гугл драйв",
+    "to": "Google Drive"
+  },
+  {
+    "from": "гмейл",
+    "to": "Gmail"
+  },
+  {
+    "from": "джимейл",
+    "to": "Gmail"
+  },
+  {
+    "from": "ютуб",
+    "to": "YouTube"
+  },
+  {
+    "from": "ютьюб",
+    "to": "YouTube"
+  },
+  {
+    "from": "инстаграм",
+    "to": "Instagram"
+  },
+  {
+    "from": "инста",
+    "to": "Instagram"
+  },
+  {
+    "from": "тикток",
+    "to": "TikTok"
+  },
+  {
+    "from": "твиттер",
+    "to": "Twitter"
+  },
+  {
+    "from": "линкедин",
+    "to": "LinkedIn"
+  },
+  {
+    "from": "реддит",
+    "to": "Reddit"
+  },
+  {
+    "from": "пинтерест",
+    "to": "Pinterest"
+  },
+  {
+    "from": "спотифай",
+    "to": "Spotify"
+  },
+  {
+    "from": "нетфликс",
+    "to": "Netflix"
+  },
+  {
+    "from": "амазон",
+    "to": "Amazon"
+  },
+  {
+    "from": "эппл",
+    "to": "Apple"
+  },
+  {
+    "from": "эпл",
+    "to": "Apple"
+  },
+  {
+    "from": "айфон",
+    "to": "iPhone"
+  },
+  {
+    "from": "айпад",
+    "to": "iPad"
+  },
+  {
+    "from": "макбук",
+    "to": "MacBook"
+  },
+  {
+    "from": "мак ос",
+    "to": "macOS"
+  },
+  {
+    "from": "макос",
+    "to": "macOS"
+  },
+  {
+    "from": "аймак",
+    "to": "iMac"
+  },
+  {
+    "from": "эйрподс",
+    "to": "AirPods"
+  },
+  {
+    "from": "аирподс",
+    "to": "AirPods"
+  },
+  {
+    "from": "эпл вотч",
+    "to": "Apple Watch"
+  },
+  {
+    "from": "эппл вотч",
+    "to": "Apple Watch"
+  },
+  {
+    "from": "виндовс",
+    "to": "Windows"
+  },
+  {
+    "from": "линукс",
+    "to": "Linux"
+  },
+  {
+    "from": "андроид",
+    "to": "Android"
+  },
+  {
+    "from": "майкрософт",
+    "to": "Microsoft"
+  },
+  {
+    "from": "ворд",
+    "to": "Word"
+  },
+  {
+    "from": "эксель",
+    "to": "Excel"
+  },
+  {
+    "from": "пауэрпоинт",
+    "to": "PowerPoint"
+  },
+  {
+    "from": "аутлук",
+    "to": "Outlook"
+  },
+  {
+    "from": "самсунг",
+    "to": "Samsung"
+  },
+  {
+    "from": "сяоми",
+    "to": "Xiaomi"
+  },
+  {
+    "from": "чат джипити",
+    "to": "ChatGPT"
+  },
+  {
+    "from": "чат гпт",
+    "to": "ChatGPT"
+  },
+  {
+    "from": "чатгпт",
+    "to": "ChatGPT"
+  },
+  {
+    "from": "джипити",
+    "to": "GPT"
+  },
+  {
+    "from": "гпт",
+    "to": "GPT"
+  },
+  {
+    "from": "опен эй ай",
+    "to": "OpenAI"
+  },
+  {
+    "from": "опенэйай",
+    "to": "OpenAI"
+  },
+  {
+    "from": "клод",
+    "to": "Claude"
+  },
+  {
+    "from": "антропик",
+    "to": "Anthropic"
+  },
+  {
+    "from": "джемини",
+    "to": "Gemini"
+  },
+  {
+    "from": "гемини",
+    "to": "Gemini"
+  },
+  {
+    "from": "копайлот",
+    "to": "Copilot"
+  },
+  {
+    "from": "перплексити",
+    "to": "Perplexity"
+  },
+  {
+    "from": "мидджорни",
+    "to": "Midjourney"
+  },
+  {
+    "from": "миджорни",
+    "to": "Midjourney"
+  },
+  {
+    "from": "дипсик",
+    "to": "DeepSeek"
+  },
+  {
+    "from": "хагинг фейс",
+    "to": "Hugging Face"
+  },
+  {
+    "from": "эй ай",
+    "to": "AI"
+  },
+  {
+    "from": "эл эл эм",
+    "to": "LLM"
+  },
+  {
+    "from": "промт",
+    "to": "промпт"
+  },
+  {
+    "from": "пул реквест",
+    "to": "pull request"
+  },
+  {
+    "from": "пулл реквест",
+    "to": "pull request"
+  },
+  {
+    "from": "мерж реквест",
+    "to": "merge request"
+  },
+  {
+    "from": "коммит",
+    "to": "commit"
+  },
+  {
+    "from": "мерж",
+    "to": "merge"
+  },
+  {
+    "from": "мёрж",
+    "to": "merge"
+  },
+  {
+    "from": "ребейз",
+    "to": "rebase"
+  },
+  {
+    "from": "бранч",
+    "to": "branch"
+  },
+  {
+    "from": "деплой",
+    "to": "deploy"
+  },
+  {
+    "from": "билд",
+    "to": "build"
+  },
+  {
+    "from": "дебаг",
+    "to": "debug"
+  },
+  {
+    "from": "фикс",
+    "to": "fix"
+  },
+  {
+    "from": "хотфикс",
+    "to": "hotfix"
+  },
+  {
+    "from": "апи",
+    "to": "API"
+  },
+  {
+    "from": "эйпиай",
+    "to": "API"
+  },
+  {
+    "from": "рест апи",
+    "to": "REST API"
+  },
+  {
+    "from": "джейсон",
+    "to": "JSON"
+  },
+  {
+    "from": "ямл",
+    "to": "YAML"
+  },
+  {
+    "from": "эс кью эль",
+    "to": "SQL"
+  },
+  {
+    "from": "эскьюэль",
+    "to": "SQL"
+  },
+  {
+    "from": "постгрес",
+    "to": "Postgres"
+  },
+  {
+    "from": "постгрескьюэль",
+    "to": "PostgreSQL"
+  },
+  {
+    "from": "майэскьюэль",
+    "to": "MySQL"
+  },
+  {
+    "from": "монго",
+    "to": "MongoDB"
+  },
+  {
+    "from": "редис",
+    "to": "Redis"
+  },
+  {
+    "from": "кафка",
+    "to": "Kafka"
+  },
+  {
+    "from": "докер",
+    "to": "Docker"
+  },
+  {
+    "from": "кубернетес",
+    "to": "Kubernetes"
+  },
+  {
+    "from": "кубер",
+    "to": "Kubernetes"
+  },
+  {
+    "from": "дженкинс",
+    "to": "Jenkins"
+  },
+  {
+    "from": "терраформ",
+    "to": "Terraform"
+  },
+  {
+    "from": "энджинкс",
+    "to": "nginx"
+  },
+  {
+    "from": "эй дабл ю эс",
+    "to": "AWS"
+  },
+  {
+    "from": "ажур",
+    "to": "Azure"
+  },
+  {
+    "from": "верцел",
+    "to": "Vercel"
+  },
+  {
+    "from": "нетлифай",
+    "to": "Netlify"
+  },
+  {
+    "from": "клаудфлер",
+    "to": "Cloudflare"
+  },
+  {
+    "from": "фронтенд",
+    "to": "frontend"
+  },
+  {
+    "from": "фронт энд",
+    "to": "frontend"
+  },
+  {
+    "from": "бэкенд",
+    "to": "backend"
+  },
+  {
+    "from": "бэк энд",
+    "to": "backend"
+  },
+  {
+    "from": "фулстек",
+    "to": "fullstack"
+  },
+  {
+    "from": "девопс",
+    "to": "DevOps"
+  },
+  {
+    "from": "эс ди кей",
+    "to": "SDK"
+  },
+  {
+    "from": "ай ди и",
+    "to": "IDE"
+  },
+  {
+    "from": "вс код",
+    "to": "VS Code"
+  },
+  {
+    "from": "ви эс код",
+    "to": "VS Code"
+  },
+  {
+    "from": "иксикод",
+    "to": "Xcode"
+  },
+  {
+    "from": "джаваскрипт",
+    "to": "JavaScript"
+  },
+  {
+    "from": "тайпскрипт",
+    "to": "TypeScript"
+  },
+  {
+    "from": "пайтон",
+    "to": "Python"
+  },
+  {
+    "from": "джава",
+    "to": "Java"
+  },
+  {
+    "from": "котлин",
+    "to": "Kotlin"
+  },
+  {
+    "from": "свифт",
+    "to": "Swift"
+  },
+  {
+    "from": "раст",
+    "to": "Rust"
+  },
+  {
+    "from": "голанг",
+    "to": "Go"
+  },
+  {
+    "from": "си шарп",
+    "to": "C#"
+  },
+  {
+    "from": "пи эйч пи",
+    "to": "PHP"
+  },
+  {
+    "from": "руби",
+    "to": "Ruby"
+  },
+  {
+    "from": "реакт",
+    "to": "React"
+  },
+  {
+    "from": "некст джей эс",
+    "to": "Next.js"
+  },
+  {
+    "from": "вью",
+    "to": "Vue"
+  },
+  {
+    "from": "ангуляр",
+    "to": "Angular"
+  },
+  {
+    "from": "ноуд джей эс",
+    "to": "Node.js"
+  },
+  {
+    "from": "нода",
+    "to": "Node.js"
+  },
+  {
+    "from": "джанго",
+    "to": "Django"
+  },
+  {
+    "from": "фласк",
+    "to": "Flask"
+  },
+  {
+    "from": "тайлвинд",
+    "to": "Tailwind"
+  },
+  {
+    "from": "таури",
+    "to": "Tauri"
+  },
+  {
+    "from": "электрон",
+    "to": "Electron"
+  },
+  {
+    "from": "вебпак",
+    "to": "webpack"
+  },
+  {
+    "from": "эн пи эм",
+    "to": "npm"
+  },
+  {
+    "from": "юай",
+    "to": "UI"
+  },
+  {
+    "from": "ю ай",
+    "to": "UI"
+  },
+  {
+    "from": "юикс",
+    "to": "UX"
+  },
+  {
+    "from": "ю экс",
+    "to": "UX"
+  },
+  {
+    "from": "эм ви пи",
+    "to": "MVP"
+  },
+  {
+    "from": "эс эй эй эс",
+    "to": "SaaS"
+  },
+  {
+    "from": "би ту би",
+    "to": "B2B"
+  },
+  {
+    "from": "би ту си",
+    "to": "B2C"
+  },
+  {
+    "from": "кей пи ай",
+    "to": "KPI"
+  },
+  {
+    "from": "оу кей ар",
+    "to": "OKR"
+  },
+  {
+    "from": "окр",
+    "to": "OKR"
+  },
+  {
+    "from": "эйчар",
+    "to": "HR"
+  },
+  {
+    "from": "сиио",
+    "to": "CEO"
+  },
+  {
+    "from": "си и о",
+    "to": "CEO"
+  },
+  {
+    "from": "си ти о",
+    "to": "CTO"
+  },
+  {
+    "from": "пиэм",
+    "to": "PM"
+  },
+  {
+    "from": "код ревью",
+    "to": "code review"
+  },
+  {
+    "from": "аппрув",
+    "to": "approve"
+  },
+  {
+    "from": "фидбек",
+    "to": "фидбэк"
+  },
+  {
+    "from": "эс эм эс",
+    "to": "SMS"
+  },
+  {
+    "from": "ю ар эл",
+    "to": "URL"
+  },
+  {
+    "from": "урл",
+    "to": "URL"
+  },
+  {
+    "from": "ай пи",
+    "to": "IP"
+  },
+  {
+    "from": "ви пи эн",
+    "to": "VPN"
+  },
+  {
+    "from": "вай фай",
+    "to": "Wi-Fi"
+  },
+  {
+    "from": "вайфай",
+    "to": "Wi-Fi"
+  },
+  {
+    "from": "блютуз",
+    "to": "Bluetooth"
+  },
+  {
+    "from": "ю эс би",
+    "to": "USB"
+  },
+  {
+    "from": "пэ дэ эф",
+    "to": "PDF"
+  },
+  {
+    "from": "пдф",
+    "to": "PDF"
+  },
+  {
+    "from": "эм пи три",
+    "to": "MP3"
+  },
+  {
+    "from": "рилс",
+    "to": "Reels"
+  },
+  {
+    "from": "шортс",
+    "to": "Shorts"
+  },
+  {
+    "from": "оке",
+    "to": "окей"
+  }
 ]

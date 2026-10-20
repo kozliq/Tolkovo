@@ -64,12 +64,12 @@
 **Не верь на слово — проверь.** Код открыт, а каждый релиз собирается на серверах GitHub прямо из этого репозитория и подтверждается криптографической подписью происхождения:
 
 ```bash
-gh attestation verify Tolkovo.dmg --repo kozliq/Tolkovo
+gh attestation verify ~/Downloads/Tolkovo-*.dmg --repo kozliq/Tolkovo
 ```
 
 ## Установка
 
-1. Скачай **[Tolkovo.dmg](https://github.com/kozliq/Tolkovo/releases/latest)** и перетащи значок в «Программы».
+1. Скачай **[Tolkovo для Mac](https://github.com/kozliq/Tolkovo/releases/latest)** (файл `Tolkovo-…-apple-silicon.dmg`), открой его и перетащи значок в «Программы».
 2. Один раз выполни в Терминале:
    ```bash
    xattr -dr com.apple.quarantine /Applications/Tolkovo.app
@@ -82,16 +82,16 @@ gh attestation verify Tolkovo.dmg --repo kozliq/Tolkovo
 ## Что дальше
 
 <p align="center">
-  <img src=".github/assets/wrapped.svg" width="100%" alt="Итоги месяца — скоро">
+  <img src=".github/assets/wrapped.svg" width="100%" alt="Итоги месяца: сколько слов наговорил, сколько времени сэкономил и сколько раз сказал «короче»">
 </p>
 
 - [x] Распознавание русской речи прямо на Mac
 - [x] Работа в любом приложении
-- [ ] Первый запуск без единой настройки и стеклянная пилюля
-- [ ] Личный словарь англицизмов
+- [x] Первый запуск без единой настройки и стеклянная пилюля
+- [x] Личный словарь англицизмов
+- [x] Статистика и «Итоги месяца» — всё считается только у тебя
 - [ ] Живой текст — слова видно прямо во время речи
 - [ ] Голосовые команды: «новая строка», «точка»
-- [ ] «Итоги месяца» — всё считается только у тебя
 
 Есть идея или нашёл баг — [открой issue](https://github.com/kozliq/Tolkovo/issues/new/choose).
 
