@@ -18,6 +18,12 @@ use crate::settings::{self, OverlayStyle};
 /// The only recognition language Tolkovo offers.
 pub const LANGUAGE: &str = "ru";
 
+/// Tolkovo keeps no history (TOLKOVO.md, «Приватно»): the recording lives in
+/// memory while it is recognized and is dropped right after. Handy writes
+/// every dictation to `recordings/*.wav` plus its text to `history.db`; with
+/// this off, `actions.rs` skips the WAV and therefore the history entry.
+pub const KEEP_HISTORY: bool = false;
+
 /// Enforce the product decisions from TOLKOVO.md on every start, whatever an
 /// older settings file says: one language (Russian), the interface in
 /// Russian, nothing that talks to the network after the model download
@@ -47,6 +53,9 @@ pub fn apply_product_settings(app: &AppHandle) {
 
 /// Create Tolkovo's own surfaces. Called from `lib.rs` after the engine is up.
 pub fn init(app: &AppHandle) {
+    if !KEEP_HISTORY {
+        purge_history(app);
+    }
     pill::create(app);
     // The app starts hidden (see apply_product_settings); the first run is
     // the one time the window opens by itself.
@@ -54,6 +63,49 @@ pub fn init(app: &AppHandle) {
     if !s.onboarding_completed || s.selected_model.is_empty() {
         crate::show_main_window(app);
     }
+}
+
+/// Delete the history that builds up to 0.2.0 left on disk: Handy's WAV
+/// recordings and the dictated text in `history.db`. Runs on every start, off
+/// the main thread; with nothing left it costs one directory listing.
+fn purge_history(app: &AppHandle) {
+    let Ok(dir) = crate::portable::app_data_dir(app) else {
+        return;
+    };
+    std::thread::spawn(move || {
+        let (files, rows) = purge_history_in(&dir);
+        if files > 0 || rows > 0 {
+            log::info!("Removed old history: {files} recordings, {rows} entries");
+        }
+    });
+}
+
+/// Remove `recordings/*.wav` and every row of `history.db` under `dir`.
+/// Returns how many files and rows were deleted.
+fn purge_history_in(dir: &std::path::Path) -> (usize, usize) {
+    let mut files = 0;
+    if let Ok(entries) = std::fs::read_dir(dir.join("recordings")) {
+        for path in entries.flatten().map(|e| e.path()) {
+            if path.extension().is_some_and(|e| e == "wav") && std::fs::remove_file(&path).is_ok() {
+                files += 1;
+            }
+        }
+    }
+
+    let mut rows = 0;
+    let db = dir.join("history.db");
+    if db.exists() {
+        if let Ok(conn) = rusqlite::Connection::open(&db) {
+            rows = conn
+                .execute("DELETE FROM transcription_history", [])
+                .unwrap_or(0);
+            // Deleted text stays in free pages until the file is rewritten.
+            if rows > 0 {
+                let _ = conn.execute_batch("VACUUM");
+            }
+        }
+    }
+    (files, rows)
 }
 
 /// Bring the settings window forward without a Dock icon. Handy promotes the
@@ -177,5 +229,37 @@ mod tests {
         assert_eq!(cut("Ура!"), "Ура!");
         assert_eq!(cut("Ждём…"), "Ждём…");
         assert_eq!(cut(""), "");
+    }
+
+    #[test]
+    fn purges_old_history() {
+        let dir = tempfile::tempdir().unwrap();
+        let rec = dir.path().join("recordings");
+        std::fs::create_dir_all(&rec).unwrap();
+        std::fs::write(rec.join("handy-1.wav"), b"RIFF").unwrap();
+        std::fs::write(rec.join("handy-2.wav"), b"RIFF").unwrap();
+        std::fs::write(rec.join("keep.txt"), b"x").unwrap();
+        let conn = rusqlite::Connection::open(dir.path().join("history.db")).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE transcription_history (id INTEGER PRIMARY KEY, transcription_text TEXT);
+             INSERT INTO transcription_history (transcription_text) VALUES ('секрет'), ('ещё');",
+        )
+        .unwrap();
+        drop(conn);
+
+        assert_eq!(super::purge_history_in(dir.path()), (2, 2));
+        assert!(rec.join("keep.txt").exists());
+        let raw = std::fs::read(dir.path().join("history.db")).unwrap();
+        let needle = "секрет".as_bytes();
+        assert!(!raw.windows(needle.len()).any(|w| w == needle));
+        // Nothing left: a second start deletes nothing.
+        assert_eq!(super::purge_history_in(dir.path()), (0, 0));
+    }
+
+    #[test]
+    fn purge_without_history_is_a_no_op() {
+        let dir = tempfile::tempdir().unwrap();
+        assert_eq!(super::purge_history_in(dir.path()), (0, 0));
+        assert!(!dir.path().join("history.db").exists());
     }
 }

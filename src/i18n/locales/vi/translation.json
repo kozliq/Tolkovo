@@ -784,7 +784,7 @@
         "starter": "Tolkovo also fixes {{count}} common words on its own: GitHub, ChatGPT, Zoom and more."
       },
       "advancedLink": "Advanced",
-      "about": "Tolkovo {{version}} · free forever",
+      "about": "Tolkovo {{version}} · free, open source",
       "period": {
         "title": "Period at the end",
         "hint": "Chats read livelier without it"
